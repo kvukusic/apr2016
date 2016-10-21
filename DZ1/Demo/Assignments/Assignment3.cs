@@ -6,7 +6,11 @@ namespace DZ1.Demo.Assignments
     {
         public void Run()
         {
-            throw new NotImplementedException();
+            Matrix a = new Matrix("Input/M3_A.txt");
+            Matrix b = new Matrix("Input/M3_B.txt");
+
+            LinearEquationSolver.SolveLU(a, b);
+            LinearEquationSolver.SolveLUP(a, b);
         }
     }
 }

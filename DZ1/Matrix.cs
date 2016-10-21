@@ -7,14 +7,14 @@ namespace DZ1
 {
     public class Matrix
     {
-        private const int PRECISION = 6;
-        private double EPSILON = Math.Pow(10, -PRECISION);
+        public static readonly int PRECISION = 6;
+        public static readonly double EPSILON = Math.Pow(10, -PRECISION);
 
-        private uint _rows;
-        private uint _cols;
+        private int _rows;
+        private int _cols;
         private double[][] _elements;
 
-        public Matrix(uint rows, uint columns)
+        public Matrix(int rows, int columns)
         {
             if (rows == 0 || columns == 0)
             {
@@ -37,8 +37,8 @@ namespace DZ1
                 throw new ArgumentNullException("fileName is null", fileName);
             }
 
-            uint rows = 0;
-            uint cols = 0;
+            int rows = 0;
+            int cols = 0;
             var values = new List<double[]>();
 
             using (var streamReader = File.OpenText(fileName))
@@ -58,14 +58,14 @@ namespace DZ1
             }
 
             // Check whether the matrix was specified correctly
-            rows = (uint)values.Count;
+            rows = values.Count;
             if (rows == 0)
             {
                 throw new ArgumentException("Invalid matrix specified in file.");
             }
 
             // Check whether all rows have same number of columns
-            cols = (uint)values[0].Length;
+            cols = values[0].Length;
             if (cols > 1)
             {
                 for (int i = 1; i < rows; i++)
@@ -95,6 +95,16 @@ namespace DZ1
                     _elements[r][c] = values[r][c];
                 }
             }
+        }
+
+        public int Rows
+        {
+            get { return (int) _rows; }
+        }
+
+        public int Columns
+        {
+            get { return (int) _cols; }
         }
 
         public Matrix Transpose()
@@ -244,6 +254,94 @@ namespace DZ1
         {
             return _rows == 1;
         }
+
+        public Matrix ToLowerTriangularMatrix()
+        {
+            if (!IsSquareMatrix())
+            {
+                throw new ArgumentException("Square matrix required.");
+            }
+
+            Matrix result = Matrix.Identity(_rows);
+
+            for (int r = 1; r < _rows; r++)
+            {
+                for (int c = 0; c < _rows; c++)
+                {
+                    result[r][c] = this[r][c];
+                }
+            }
+
+            return result;
+        }
+
+        public Matrix ToUpperTriangularMatrix()
+        {
+            if (!IsSquareMatrix())
+            {
+                throw new ArgumentException("Square matrix required.");
+            }
+
+            Matrix result = new Matrix(_rows, _cols);
+
+            for (int r = 0; r < _rows; r++)
+            {
+                for (int c = r; c < _cols; c++)
+                {
+                    result[r][c] = this[r][c];
+                }
+            }
+
+            return result;
+        }
+
+        #region Static Factory
+            
+            public static Matrix Identity(int dim)
+            {
+                Matrix result = new Matrix(dim, dim);
+                for (int r = 0; r < dim; r++)
+                {
+                    result[r][r] = 1.0;
+                }
+                return result;
+            }
+
+        #endregion
+
+        #region Write
+            
+        public void Write(TextWriter writer)
+        {
+            using(StringReader sr = new StringReader(this.ToString()))
+            {
+                string line;
+                while((line = sr.ReadLine()) != null)
+                {
+                    writer.WriteLine(line);
+                }
+            }
+        }
+
+        public void WriteToConsole()
+        {
+            Write(Console.Out);
+        }
+
+        public void WriteToFile(string filePath)
+        {
+            using(FileStream fs = new FileStream(filePath, FileMode.OpenOrCreate))
+            {
+                using(StreamWriter sw = new StreamWriter(fs))
+                {
+                    Write(sw);
+                }
+            }
+
+            Console.Out.WriteLine("Matrix successfully written to file: " + filePath);
+        }
+
+        #endregion
 
         #region Operators
 
@@ -417,7 +515,10 @@ namespace DZ1
                     }
                 }
 
-                sb.AppendLine();
+                if (r < _rows - 1)
+                {
+                    sb.AppendLine();
+                }
             }
             return sb.ToString();
         }
@@ -435,7 +536,7 @@ namespace DZ1
             {
                 for (int c = 0; c < _cols; c++)
                 {
-                    if (_elements[r][c] != other._elements[r][c])
+                    if (Math.Abs(_elements[r][c] - other._elements[r][c]) > EPSILON)
                     {
                         return false;
                     }

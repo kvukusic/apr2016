@@ -26,7 +26,6 @@ namespace DZ1.Demo
                 }
 
                 Console.WriteLine();
-                Console.WriteLine();
             }
         }
     }
