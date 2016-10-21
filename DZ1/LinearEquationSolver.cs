@@ -7,7 +7,7 @@ namespace DZ1
         private static Matrix Solve(Matrix l, Matrix u, Matrix b)
         {
             Matrix y = SubstituteForward(l, b);
-            Matrix x = SubstituteBackward(l, y);
+            Matrix x = SubstituteBackward(u, y);
             return x;
         }
 
