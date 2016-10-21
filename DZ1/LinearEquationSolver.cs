@@ -26,10 +26,17 @@ namespace DZ1
             {
                 var result = Solve(decomposition.L, decomposition.U, b);
                 
-                Console.WriteLine();
-                ConsoleEx.WriteLineGreen("The given system has the following solution:");
-                ConsoleEx.WriteLine("x:");
-                ConsoleEx.WriteLine(result.ToString());
+                if(result != null)
+                {
+                    Console.WriteLine();
+                    ConsoleEx.WriteLineGreen("The given system has the following solution:");
+                    ConsoleEx.WriteLine("x:");
+                    ConsoleEx.WriteLine(result.ToString());
+                }
+                else
+                {
+                    ConsoleEx.WriteLineRed("The given system has no solutions.");                    
+                }
 
                 return result;
             }
@@ -54,10 +61,17 @@ namespace DZ1
             {
                 var result = Solve(decomposition.L, decomposition.U, decomposition.P*b);
 
-                Console.WriteLine();
-                ConsoleEx.WriteLineGreen("The given system has the following solution:");
-                ConsoleEx.WriteLine("x:");
-                ConsoleEx.WriteLine(result.ToString());
+                if(result != null)
+                {
+                    Console.WriteLine();
+                    ConsoleEx.WriteLineGreen("The given system has the following solution:");
+                    ConsoleEx.WriteLine("x:");
+                    ConsoleEx.WriteLine(result.ToString());
+                }
+                else
+                {
+                    ConsoleEx.WriteLineRed("The given system has no solutions.");                    
+                }
 
                 return result;
             }
@@ -87,8 +101,8 @@ namespace DZ1
             {
                 if(Math.Abs(a[i][i]) < Matrix.EPSILON)
                 {
-                    // TODO
-                    ConsoleEx.WriteLineRed("Possible zero division");
+                    ConsoleEx.WriteLineRed("Backward substitution not possible because of zero diagonal element.");
+                    return null;
                 }
 
                 result[i][0] /= a[i][i];
