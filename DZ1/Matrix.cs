@@ -30,6 +30,17 @@ namespace DZ1
             }
         }
 
+        public Matrix(double[,] values) : this(values.GetLength(0), values.GetLength(1))
+        {
+            for (int r = 0; r < _rows; r++)
+            {
+                for (int c = 0; c < _cols; c++)
+                {
+                    this[r][c] = values[r, c];
+                }
+            }
+        }
+
         public Matrix(string fileName)
         {
             if (fileName == null)
