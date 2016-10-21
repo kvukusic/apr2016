@@ -266,7 +266,7 @@ namespace DZ1
 
             for (int r = 1; r < _rows; r++)
             {
-                for (int c = 0; c < _rows; c++)
+                for (int c = 0; c < r; c++)
                 {
                     result[r][c] = this[r][c];
                 }
