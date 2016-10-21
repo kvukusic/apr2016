@@ -11,6 +11,10 @@ namespace DZ1.Demo.Assignments
 
             LinearEquationSolver.SolveLU(a, b);
             LinearEquationSolver.SolveLUP(a, b);
+
+            // LU decomposition does not work in this example because we get
+            // a zero diagonal (pivot) element and a division by zero error
+            // The solution is to use LUP to improve the stability
         }
     }
 }
