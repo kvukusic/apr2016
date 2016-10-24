@@ -12,9 +12,14 @@ namespace DZ1.Demo.Assignments
             LinearEquationSolver.SolveLU(a, b);
             LinearEquationSolver.SolveLUP(a, b);
 
-            double scale = 10e3;
-            LinearEquationSolver.SolveLU(a*scale, b*scale);
-            LinearEquationSolver.SolveLUP(a*scale, b*scale);
+            double scale1 = 1e9;
+            double scale2 = 10e9;
+            a.SetRow(0, a.GetRow(0)/scale1);
+            b.SetRow(0, b.GetRow(0)/scale1);
+            a.SetRow(2, a.GetRow(2)*scale2);
+            b.SetRow(2, b.GetRow(2)*scale2);
+            LinearEquationSolver.SolveLU(a, b);
+            LinearEquationSolver.SolveLUP(a, b);
 
             // If we use EPSILON 10e-6 the algorithm will fail because we treat
             // 0.0000000003 as zero and return as divide by zero error.
