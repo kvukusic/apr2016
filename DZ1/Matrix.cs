@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace APR.Math
+namespace APR.DZ1
 {
     public class Matrix
     {

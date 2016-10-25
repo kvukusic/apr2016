@@ -1,6 +1,6 @@
 using System;
 
-namespace DZ1.Demo.Assignments
+namespace APR.DZ1.Demo.Assignments
 {
     public class Assignment6 : IAssignment
     {
