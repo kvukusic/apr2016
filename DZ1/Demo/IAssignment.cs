@@ -1,6 +1,6 @@
 using System;
 
-namespace DZ1.Demo
+namespace APR.DZ1.Demo
 {
     public interface IAssignment
     {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace DZ1
+namespace APR.DZ1
 {
     public class Matrix
     {
@@ -308,15 +308,15 @@ namespace DZ1
 
         #region Static Factory
             
-            public static Matrix Identity(int dim)
+        public static Matrix Identity(int dim)
+        {
+            Matrix result = new Matrix(dim, dim);
+            for (int r = 0; r < dim; r++)
             {
-                Matrix result = new Matrix(dim, dim);
-                for (int r = 0; r < dim; r++)
-                {
-                    result[r][r] = 1.0;
-                }
-                return result;
+                result[r][r] = 1.0;
             }
+            return result;
+        }
 
         #endregion
 

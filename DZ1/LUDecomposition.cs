@@ -1,6 +1,6 @@
 using System;
 
-namespace DZ1
+namespace APR.DZ1
 {
     public class LUDecomposition : IDecomposition
     {
