@@ -10,7 +10,6 @@ namespace APR.DZ1
         public static readonly double EPSILON = Math.Pow(10, -PRECISION);
 
         private double[] _values;
-        private bool _isTransposed;
 
         public Vector (int dimension)
         {
@@ -37,9 +36,10 @@ namespace APR.DZ1
             return _values.Norm();
         }
 
-        public void Transpose()
+        public Vector Copy()
         {
-            _isTransposed = !_isTransposed;
+            var retval = new Vector(_values);
+            return retval;
         }
 
         public double this[int index]
@@ -48,6 +48,120 @@ namespace APR.DZ1
             set { _values[index] = value; }
         }
 
+#region Operators
+    public static bool operator ==(Vector lhs, Vector rhs)
+        {
+            return Equals(lhs, rhs);
+        }
+
+        public static bool operator !=(Vector lhs, Vector rhs)
+        {
+            return !Equals(lhs, rhs);
+        }
+
+        public static Vector operator *(double lhs, Vector rhs)
+        {
+            Vector result = rhs.Copy();
+            for (int i = 0; i < rhs.Dimension; i++)
+            {
+                result[i] *= lhs;
+            }
+
+            return result;
+        }
+
+        public static Vector operator *(Vector lhs, double rhs)
+        {
+            Vector result = lhs.Copy();
+            for (int i = 0; i < lhs.Dimension; i++)
+            {
+                result[i] *= rhs;
+            }
+
+            return result;
+        }
+
+        public static Vector operator /(Vector lhs, double rhs)
+        {
+            Vector result = lhs.Copy();
+            for (int i = 0; i < lhs.Dimension; i++)
+            {
+                result[i] /= rhs;
+            }
+
+            return result;
+        }
+
+        public static Vector operator +(Vector lhs, Vector rhs)
+        {
+            if (lhs.Dimension != rhs.Dimension)
+            {
+                throw new ArgumentException("Vertices are incomaptible");
+            }
+
+            Vector result = lhs.Copy();
+            for (int i = 0; i < lhs.Dimension; i++)
+            {
+                result[i] += rhs[i];
+            }
+
+            return result;
+        }
+
+        public static Vector operator -(Vector lhs, Vector rhs)
+        {
+            if (lhs.Dimension != rhs.Dimension)
+            {
+                throw new ArgumentException("Vertices are incomaptible");
+            }
+
+            Vector result = lhs.Copy();
+            for (int i = 0; i < result.Dimension; i++)
+            {
+                result[i] -= rhs[i];
+            }
+
+            return result;
+        }
+        
+#endregion
+
+#region Equals & HashCode
+        protected bool Equals(Vector other)
+        {
+            if(_values.Length != other._values.Length) return false;
+
+            for (int i = 0; i < _values.Length; i++)
+            {
+                if (Math.Abs(_values[i] - other._values[i]) > EPSILON)
+                    {
+                        return false;
+                    }
+            }
+
+            return true;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((Vector)obj);
+        }
+
+        public override int GetHashCode()
+        {
+            int hash = 17;
+            for (int i = 0; i < _values.Length; i++)
+            {
+                hash = hash * 31 + (int)_values[i];
+            }
+            return hash;
+        }
+#endregion
+
+#region ToString
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
@@ -61,7 +175,9 @@ namespace APR.DZ1
                 }
             }
             sb.Append(']');
+
             return sb.ToString();
         }
+#endregion
     }
 }
