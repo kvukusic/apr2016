@@ -17,6 +17,7 @@ namespace APR.DZ2.Functions
         private int _cachedCalls;
         private int _gradientEvaluations;
         private int _hessianEvaluations;
+        private bool _statisticsEnabled = true;
 
         /// <summary>
         /// Gets the number of calls to this function that returned results that were not already
@@ -61,13 +62,13 @@ namespace APR.DZ2.Functions
             var xCopy = x.Copy();
             if (_cache.ContainsKey(xCopy))
             {
-                _cachedCalls++;
+                if(_statisticsEnabled) _cachedCalls++;
                 return _cache[x];
             }
 
             var value = ValueEx(xCopy);
             _cache.Add(xCopy, value);
-            _evaluations++;
+            if(_statisticsEnabled) _evaluations++;
             return value;
         }
 
@@ -78,9 +79,16 @@ namespace APR.DZ2.Functions
         /// <returns>The function value.</returns>
         public double[] Gradient(params double[] x)
         {
-            _gradientEvaluations++;
+            if(_statisticsEnabled) _gradientEvaluations++;
 
             var xCopy = x.Copy();
+
+            var grad = GradientEx(x);
+            if(grad != null)
+            {
+                return grad;
+            }
+
             return xCopy.Select((d, i) => PartialDerivative(i, xCopy)).ToArray();
         }
 
@@ -137,7 +145,13 @@ namespace APR.DZ2.Functions
         /// <returns>The <c>Hessian</c> matrix.</returns>
         public Matrix Hessian(params double[] x)
         {
-            _hessianEvaluations++;
+            if(_statisticsEnabled) _hessianEvaluations++;
+
+            var hessian = HessianEx(x);
+            if(hessian != null)
+            {
+                return hessian;
+            }
 
             var result = new Matrix(x.Length, x.Length);
 
@@ -153,6 +167,26 @@ namespace APR.DZ2.Functions
         }
 
         protected abstract double ValueEx(params double[] x);
+
+        protected double[] GradientEx(params double[] x)
+        {
+            return null;
+        }
+
+        protected Matrix HessianEx(params double[] x)
+        {
+            return null;
+        }
+
+        public void EnableStatistcs()
+        {
+            _statisticsEnabled = true;
+        }
+
+        public void DisableStatistics()
+        {
+            _statisticsEnabled = false;
+        }
 
         class DoubleArrayStructuralEqualityComparer : EqualityComparer<double[]>
         {
