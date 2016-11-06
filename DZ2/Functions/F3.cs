@@ -11,6 +11,7 @@ namespace APR.DZ2.Functions
     /// </summary>
     public class F3 : Function
     {
+        // TODO remove if not needed, ASK
         private readonly double[] _parameters;
 
         /// <summary>
@@ -23,7 +24,8 @@ namespace APR.DZ2.Functions
 
         protected override double ValueEx(params double[] x)
         {
-            return x.Select((t, i) => Math.Pow(t - _parameters[i], 2)).Sum();
+            // return x.Select((t, i) => Math.Pow(t - _parameters[i], 2)).Sum();
+            return x.Select((xi, i) => Math.Pow(xi - (i + 1), 2)).Sum();
         }
     }
 }
