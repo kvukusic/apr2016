@@ -16,7 +16,7 @@ namespace APR.DZ2.Demo.Assignments
             {
                 new Tuple<Function, double[]>(new F1(), new double[] {-1.9, 2.0}),
                 new Tuple<Function, double[]>(new F2(), new double[] {0.1, 0.3}),
-                new Tuple<Function, double[]>(new F3(1,1,1,1,1), new double[] {0,0,0,0,0}),
+                new Tuple<Function, double[]>(new F3(), new double[] {0,0,0,0,0}),
                 new Tuple<Function, double[]>(new F4(), new double[] {5.1, 1.1})
             };
 

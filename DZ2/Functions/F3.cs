@@ -11,17 +11,6 @@ namespace APR.DZ2.Functions
     /// </summary>
     public class F3 : Function
     {
-        // TODO remove if not needed, ASK
-        private readonly double[] _parameters;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="F3"/> class.
-        /// </summary>
-        public F3(params double[] parameters)
-        {
-            _parameters = parameters;
-        }
-
         protected override double ValueEx(params double[] x)
         {
             // return x.Select((t, i) => Math.Pow(t - _parameters[i], 2)).Sum();

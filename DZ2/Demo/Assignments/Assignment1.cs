@@ -7,7 +7,7 @@ namespace APR.DZ2.Demo.Assignments
     {
         public void Run()
         {
-            var function = new F3(3);
+            var function = new F3();
 
             for (int i = 10; i <= 15; i++)
             {
