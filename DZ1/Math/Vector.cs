@@ -19,6 +19,8 @@ namespace APR.DZ1
             {
                 throw new ArgumentException("Negative or zero dimension.");
             }
+
+            _values = new double[dimension];
         }
 
         public Vector(params double[] values)
