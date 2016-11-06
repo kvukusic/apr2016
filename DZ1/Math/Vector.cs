@@ -1,10 +1,12 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Text;
 using APR.DZ1.Extensions;
 
 namespace APR.DZ1
 {
-    public class Vector
+    public class Vector : IEnumerable<double>
     {
         public static readonly int PRECISION = 6;
         public static readonly double EPSILON = Math.Pow(10, -PRECISION);
@@ -46,6 +48,18 @@ namespace APR.DZ1
         {
             get { return _values[index]; }
             set { _values[index] = value; }
+        }
+
+        public double[] AsArray()
+        {
+            return _values.Copy();
+        }
+
+        public static Vector Identity(int dimension, int i)
+        {
+            Vector result = new Vector(dimension);
+            result[i] = 1;
+            return result;
         }
 
 #region Operators
@@ -124,6 +138,18 @@ namespace APR.DZ1
             return result;
         }
         
+#endregion
+
+#region IEnumerable
+        public IEnumerator<double> GetEnumerator()
+        {
+            return ((IEnumerable<double>)_values).GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return ((IEnumerable<double>)_values).GetEnumerator();
+        }
 #endregion
 
 #region Equals & HashCode
