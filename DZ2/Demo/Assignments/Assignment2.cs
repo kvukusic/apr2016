@@ -11,7 +11,7 @@ namespace APR.DZ2.Demo.Assignments
     {
         public void Run()
         {
-            var result = new List<Tuple<string, string, string>>();
+            var result = new List<Tuple<string, string, string, string>>();
             var functions = new List<Tuple<Function, double[]>>()
             {
                 new Tuple<Function, double[]>(new F1(), new double[] {-1.9, 2.0}),
@@ -28,20 +28,25 @@ namespace APR.DZ2.Demo.Assignments
                 var min1 = opt1.Minimize(item.Item1, item.Item2.Copy());
                 var opt1Evals = item.Item1.Evaluations;
 
-                var opt2 = new HookeJeevesSearch(Enumerable.Repeat(0.5, item.Item2.Length).ToArray(),
-                    Enumerable.Repeat(10e-6, item.Item2.Length).ToArray());
+                var opt2 = new HookeJeevesSearch();
                 opt2.IsOutputEnabled = false;
                 var min2 = opt2.Minimize(item.Item1, item.Item2.Copy());
                 var opt2Evals = item.Item1.Evaluations;
 
-                result.Add(new Tuple<string, string, string>((i + 1).ToString(),
+                var opt3 = new CoordinateDescent();
+                opt3.IsOutputEnabled = false;
+                var min3 = opt3.Minimize(item.Item1, item.Item2.Copy());
+                var opt3Evals = item.Item1.Evaluations;
+
+                result.Add(new Tuple<string, string, string, string>((i + 1).ToString(),
                     opt1Evals.ToString() + " (min: " + item.Item1.Value(min1).ToString("F20") + ")",
-                    opt2Evals.ToString() + " (min: " + item.Item1.Value(min2).ToString("F20") + ")"));
+                    opt2Evals.ToString() + " (min: " + item.Item1.Value(min2).ToString("F20") + ")",
+                    opt3Evals.ToString() + " (min: " + item.Item1.Value(min2).ToString("F20") + ")"));
             }
 
             Console.WriteLine(result.ToStringTable(
-                new[] {"Function", "Nelder and Mead", "Hooke-Jeeves"},
-                a => a.Item1, a => a.Item2, a => a.Item3));
+                new[] {"Function", "Nelder and Mead", "Hooke-Jeeves", "Coordinate Descent"},
+                a => a.Item1, a => a.Item2, a => a.Item3, a => a.Item4));
             Console.WriteLine();
         }
     }

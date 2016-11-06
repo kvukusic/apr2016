@@ -11,20 +11,25 @@ namespace APR.DZ2.Demo.Assignments
 
             for (int i = 10; i <= 15; i++)
             {
-                // Golden section search
-                var opt1 = new GoldenSectionSearch();
+                // Coordinate descent method
+                var opt1 = new CoordinateDescent();
                 opt1.IsOutputPerIterationEnabled = false;
-                opt1.Minimize(function, i);
+                opt1.Minimize(function, new double[] {i});
+
+                // Golden section search
+                var opt2 = new GoldenSectionSearch();
+                opt2.IsOutputPerIterationEnabled = false;
+                opt2.Minimize(function, i);
 
                 // Nelder-Mead search
-                var opt2 = new NelderMeadSearch();
-                opt2.IsOutputPerIterationEnabled = false;
-                opt2.Minimize(function, new double[] {i});
+                var opt3 = new NelderMeadSearch();
+                opt3.IsOutputPerIterationEnabled = false;
+                opt3.Minimize(function, new double[] {i});
 
                 // Hooke-Jeeves pattern search
-                var opt3 = new HookeJeevesSearch(new double[] { 0.5, 0.5 }, new double[] { 10e-6, 10e-6 });
-                opt3.IsOutputPerIterationEnabled = false;
-                opt3.Minimize(function, new double[] { i });
+                var opt4 = new HookeJeevesSearch();
+                opt4.IsOutputPerIterationEnabled = false;
+                opt4.Minimize(function, new double[] {i});
             }
         }
     }

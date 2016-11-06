@@ -15,7 +15,7 @@ namespace APR.DZ2.Demo.Assignments
             opt2.Minimize(function, new double[] { 5, 5 });
 
             // Hooke-Jeeves pattern search
-            var opt3 = new HookeJeevesSearch(new double[] { 0.5, 0.5 }, new double[] { 10e-6, 10e-6 });
+            var opt3 = new HookeJeevesSearch();
             opt3.IsOutputPerIterationEnabled = false;
             opt3.Minimize(function, new double[] { 5, 5 });
         }
