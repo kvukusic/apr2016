@@ -10,7 +10,7 @@ namespace APR.DZ2
     {
         public static readonly int PRECISION = 6;
         public static readonly double EPSILON = Math.Pow(10, -PRECISION);
-        private static readonly int MAX_ITERATIONS = 100000;
+        private static readonly int MAX_ITERATIONS = 10000;
 
         /// <summary>
         /// The upper bound of the interval used in finding the optimal <c>lambda</c>
@@ -81,7 +81,7 @@ namespace APR.DZ2
                     break;
                 }
 
-            } while (x.Select((xi, i) => Math.Abs(xi - xs[i]) > e[i]).Any(v => !v));
+            } while ((x - xs).Norm() > e.Norm());
 
             if (IsOutputPerIterationEnabled && IsOutputEnabled)
             {
@@ -117,22 +117,29 @@ namespace APR.DZ2
         {
             var g = new DelegateFunction(lambda =>
             {
-                return f.Value(currentPoint.Select((d, i) => d + lambda[0]*identity[i]).ToArray());
+                return f.Value(currentPoint.Select((xi, i) => xi + lambda[0]*identity[i]).ToArray());
             });
 
             // Find the upper interval for the golden section line search
-            var s = INITIAL_GOLDEN_SECTION_INTERVAL;
+            var upper = INITIAL_GOLDEN_SECTION_INTERVAL;
+            var lower = -upper;
             var functionValue = f.Value(currentPoint.AsArray());
 
-            // Double s until f(x - s*grad) > f(x)
-            while (f.Value(currentPoint.Select((d, i) => d + s*identity[i]).ToArray()) <= functionValue)
+            // Double s until f(x + lambda*identity) > f(x)
+            while (f.Value(currentPoint.Select((xi, i) => xi + upper*identity[i]).ToArray()) <= functionValue)
             {
-                s *= 2;
+                upper *= 2;
+            }
+
+            // Double s until f(x - lambda*identity) > f(x)
+            while (f.Value(currentPoint.Select((xi, i) => xi + lower*identity[i]).ToArray()) <= functionValue)
+            {
+                lower *= 2;
             }
 
             var minimizer = new GoldenSectionSearch();
             minimizer.IsOutputEnabled = false;
-            return minimizer.Minimize(g, new GoldenSectionSearch.Interval(0, s));
+            return minimizer.Minimize(g, new GoldenSectionSearch.Interval(lower, upper));
         }
     }
 }
