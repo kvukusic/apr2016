@@ -4,6 +4,11 @@ namespace System
 {
     public static class ConsoleEx
     {
+        public static void Write(String message)
+        {
+            Console.Write(message);
+        }
+
         public static void WriteLine(String message = null)
         {
             Console.WriteLine(message);
