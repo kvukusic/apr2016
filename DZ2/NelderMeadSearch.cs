@@ -8,15 +8,14 @@ namespace APR.DZ2
 {
     public class NelderMeadSearch : IMinimizer
     {
-        private const int OutputPrecision = 6;
-
-        private readonly int MAX_IT = 1000;
-
-        private readonly double EPSILON = 10e-6;
+        public static readonly int PRECISION = 6;
+        public static readonly double EPSILON = Math.Pow(10, -PRECISION);
+        private readonly int MAX_IT = 100000;
         private readonly double ALPHA = 1.0;
         private readonly double BETA = 0.5;
         private readonly double GAMMA = 2.0;
         private readonly double SIGMA = 0.5;
+        
         private double SIMPLEX_OFFSET = 1.0;
 
         public NelderMeadSearch()
@@ -68,41 +67,45 @@ namespace APR.DZ2
             if (IsOutputEnabled)
             {
 
-                Console.WriteLine();
-                Console.WriteLine("****************************************************************");
-                Console.WriteLine("Starting minimization with Nelder Mead Simplex Search method...");
+                ConsoleEx.WriteLine();
+                ConsoleEx.WriteLineGreen("****************************************************************");
+                ConsoleEx.WriteLineGreen("Starting minimization with Nelder Mead Simplex Search method...");
 
-                Console.WriteLine();
-
+                ConsoleEx.WriteLine();
+                ConsoleEx.WriteLine("Parameters: ");
+                ConsoleEx.WriteLine("x0 = " + start.Format(PRECISION));
+                ConsoleEx.WriteLine("alpha = " + ALPHA.ToString("F" + PRECISION));
+                ConsoleEx.WriteLine("beta = " + BETA.ToString("F" + PRECISION));
+                ConsoleEx.WriteLine("gamma = " + GAMMA.ToString("F" + PRECISION));
+                ConsoleEx.WriteLine("sigma = " + SIGMA.ToString("F" + PRECISION));
+                ConsoleEx.WriteLine("t = " + SIMPLEX_OFFSET.ToString("F" + PRECISION));
+                ConsoleEx.WriteLine();
             }
 
-            int vs;         /* vertex with smallest value */
-            int vh;         /* vertex with next smallest value */
-            int vg;         /* vertex with largest value */
+            int vs; // Vertex with smallest value
+            int vh; // Vertex with next smallest value
+            int vg; // Vertex with largest value
 
             int i, j, m, row;
-            int itr;          /* track the number of iterations */
+            int itr; // Track the number of iterations
 
-            double[][] v;     /* holds vertices of simplex */
-            double pn, qn;   /* values used to create initial simplex */
-            double[] f;      /* value of function at each vertex */
-            double fr;      /* value of function at reflection point */
-            double fe;      /* value of function at expansion point */
-            double fc;      /* value of function at contraction point */
-            double[] vr;     /* reflection - coordinates */
-            double[] ve;     /* expansion - coordinates */
-            double[] vc;     /* contraction - coordinates */
-            double[] vm;     /* centroid - coordinates */
-            double min;
+            double[][] v; // Holds vertices of simplex
+            double pn, qn; // Values used to create initial simplex
+            double[] f; // Value of function at each vertex
+            double fr; // Value of function at reflection point
+            double fe; // Value of function at expansion point
+            double fc; // Value of function at contraction point
+            double[] vr; // Reflection - coordinates
+            double[] ve; // Expansion - coordinates
+            double[] vc; // Contraction - coordinates
+            double[] vm; // Centroid - coordinates
 
             double fsum, favg, s, cent;
 
             // Dimension
             int n = start.Length;
 
-            /* dynamically allocate arrays */
-
-            /* allocate the rows of the arrays */
+            // Allocate the rows of the arrays
             v = new double[n+1][];
             f = new double[n+1];
             vr = new double[n];
@@ -110,14 +113,14 @@ namespace APR.DZ2
             vc = new double[n];
             vm = new double[n];
 
-            /* allocate the columns of the arrays */
+            // Allocate the columns of the arrays
             for (i = 0; i <= n; i++)
             {
                 v[i] = new double[n];
             }
 
-            /* create the initial simplex */
-            /* assume one of the vertices is 0,0 */
+            // Create the initial simplex
+            // Assume one of the vertices is 0,0
             pn = SIMPLEX_OFFSET*(Math.Sqrt(n + 1) - 1 + n)/(n*Math.Sqrt(2));
             qn = SIMPLEX_OFFSET*(Math.Sqrt(n + 1) - 1)/(n*Math.Sqrt(2));
 
@@ -141,7 +144,7 @@ namespace APR.DZ2
                 }
             }
 
-            /* find the initial function values */
+            // Find the initial function values
             for (j = 0; j <= n; j++)
             {
                 f[j] = function.Value(v[j]);
@@ -149,24 +152,24 @@ namespace APR.DZ2
 
             if (IsOutputEnabled)
             {
-                /* print out the initial values */
-                Console.WriteLine("Initial Values:");
+                // Print out the initial values
+                ConsoleEx.WriteLine("Initial Values:");
                 for (j = 0; j <= n; j++)
                 {
                     for (i = 0; i < n; i++)
                     {
-                        Console.WriteLine(v[j][i].ToString("F" + OutputPrecision) + " " +
-                                          f[j].ToString("F" + OutputPrecision));
+                        ConsoleEx.WriteLine(v[j][i].ToString("F" + PRECISION) + " " +
+                                          f[j].ToString("F" + PRECISION));
                     }
                 }
 
-                Console.WriteLine();
+                ConsoleEx.WriteLine();
             }
 
-            /* begin the main loop of the minimization */
+            // Begin the main loop of the minimization
             for (itr = 1; itr <= MAX_IT; itr++)
             {
-                /* find the index of the largest value */
+                // Find the index of the largest value
                 vg = 0;
                 for (j = 0; j <= n; j++)
                 {
@@ -176,7 +179,7 @@ namespace APR.DZ2
                     }
                 }
 
-                /* find the index of the smallest value */
+                // Find the index of the smallest value
                 vs = 0;
                 for (j = 0; j <= n; j++)
                 {
@@ -186,7 +189,7 @@ namespace APR.DZ2
                     }
                 }
 
-                /* find the index of the second largest value */
+                // Find the index of the second largest value
                 vh = vs;
                 for (j = 0; j <= n; j++)
                 {
@@ -196,7 +199,7 @@ namespace APR.DZ2
                     }
                 }
 
-                /* calculate the centroid */
+                // Calculate the centroid
                 for (j = 0; j <= n - 1; j++)
                 {
                     cent = 0.0;
@@ -210,10 +213,10 @@ namespace APR.DZ2
                     vm[j] = cent / n;
                 }
 
-                /* reflect vg to new vertex vr */
+                // Reflect vg to new vertex vr
                 for (j = 0; j <= n - 1; j++)
                 {
-                    /*vr[j] = (1+ALPHA)*vm[j] - ALPHA*v[vg][j];*/
+                    // vr[j] = (1+ALPHA)*vm[j] - ALPHA*v[vg][j];
                     vr[j] = vm[j] + ALPHA * (vm[j] - v[vg][j]);
                 }
                 
@@ -228,21 +231,20 @@ namespace APR.DZ2
                     f[vg] = fr;
                 }
 
-                /* investigate a step further in this direction */
+                // Investigate a step further in this direction
                 if (fr < f[vs])
                 {
                     for (j = 0; j <= n - 1; j++)
                     {
-                        /*ve[j] = GAMMA*vr[j] + (1-GAMMA)*vm[j];*/
+                        // ve[j] = GAMMA*vr[j] + (1-GAMMA)*vm[j];
                         ve[j] = vm[j] + GAMMA * (vr[j] - vm[j]);
                     }
                     
                     fe = function.Value(ve);
 
-                    /* by making fe < fr as opposed to fe < f[vs], 			   
-                       Rosenbrocks function takes 63 iterations as opposed 
-                       to 64 when using double variables. */
-
+                    // By making fe < fr as opposed to fe < f[vs],
+                    // Rosenbrocks function takes 63 iterations as opposed 
+                    // to 64 when using double variables.
                     if (fe < fr)
                     {
                         for (j = 0; j <= n - 1; j++)
@@ -262,25 +264,25 @@ namespace APR.DZ2
                     }
                 }
 
-                /* check to see if a contraction is necessary */
+                // Check to see if a contraction is necessary
                 if (fr >= f[vh])
                 {
                     if (fr < f[vg] && fr >= f[vh])
                     {
-                        /* perform outside contraction */
+                        // Perform outside contraction
                         for (j = 0; j <= n - 1; j++)
                         {
-                            /*vc[j] = BETA*v[vg][j] + (1-BETA)*vm[j];*/
+                            // vc[j] = BETA*v[vg][j] + (1-BETA)*vm[j];
                             vc[j] = vm[j] + BETA * (vr[j] - vm[j]);
                         }
                         
                         fc = function.Value(vc);
                     }
                     else {
-                        /* perform inside contraction */
+                        // Perform inside contraction
                         for (j = 0; j <= n - 1; j++)
                         {
-                            /*vc[j] = BETA*v[vg][j] + (1-BETA)*vm[j];*/
+                            // vc[j] = BETA*v[vg][j] + (1-BETA)*vm[j];
                             vc[j] = vm[j] - BETA * (vm[j] - v[vg][j]);
                         }
                         
@@ -297,11 +299,10 @@ namespace APR.DZ2
 
                         f[vg] = fc;
                     }
-                    /* at this point the contraction is not successful,
-                       we must halve the distance from vs to all the 
-                       vertices of the simplex and then continue.
-                       10/31/97 - modified to account for ALL vertices. 
-                    */
+
+                    // At this point the contraction is not successful,
+                    // we must halve the distance from vs to all the 
+                    // vertices of the simplex and then continue.
                     else
                     {
                         for (row = 0; row <= n; row++)
@@ -310,7 +311,7 @@ namespace APR.DZ2
                             {
                                 for (j = 0; j <= n - 1; j++)
                                 {
-                                    v[row][j] = v[vs][j] + (v[row][j] - v[vs][j]) / 2.0;
+                                    v[row][j] = v[vs][j] + (v[row][j] - v[vs][j]) * SIGMA;
                                 }
                             }
                         }
@@ -320,7 +321,7 @@ namespace APR.DZ2
                     }
                 }
 
-                /* print out the value at each iteration */
+                // Print out the value at each iteration
                 if (IsOutputPerIterationEnabled && IsOutputEnabled)
                 {
                     Console.WriteLine("Iteration {0}:", itr);
@@ -328,15 +329,15 @@ namespace APR.DZ2
                     //{
                     //    for (i = 0; i < n; i++)
                     //    {
-                    //        Console.WriteLine(v[j][i].ToString("F" + OutputPrecision) + " " +
+                    //        ConsoleEx.WriteLine(v[j][i].ToString("F" + OutputPrecision) + " " +
                     //                          f[j].ToString("F" + OutputPrecision));
                     //    }
                     //}
 
-                    Console.WriteLine("Xc: " + vm.Format(OutputPrecision) + ", f(Xc): " + function.Value(vm).ToString("F" + OutputPrecision));
+                    ConsoleEx.WriteLine("Xc: " + vm.Format(PRECISION) + ", f(Xc): " + function.Value(vm).ToString("F" + PRECISION));
                 }
 
-                /* test for convergence */
+                // Test for convergence
                 fsum = 0.0;
                 for (j = 0; j <= n; j++)
                 {
@@ -351,9 +352,9 @@ namespace APR.DZ2
                 s = Math.Sqrt(s);
                 if (s < EPSILON) break;
             }
-            /* end main loop of the minimization */
+            // End main loop of the minimization
 
-            /* find the index of the smallest value */
+            // Find the index of the smallest value
             vs = 0;
             for (j = 0; j <= n; j++)
             {
@@ -365,19 +366,19 @@ namespace APR.DZ2
 
             if (IsOutputPerIterationEnabled && IsOutputEnabled)
             {
-                Console.WriteLine();
+                ConsoleEx.WriteLine();
             }
 
             if (IsOutputEnabled)
             {
                 var evaluations = function.Evaluations;
                 var cachedCalls = function.CachedCalls;
-                Console.WriteLine("Final position found. Returning value: x = " + v[vs].Format(OutputPrecision));
-                Console.WriteLine("Function value of final position is: " + function.Value(v[vs]).ToString("F" + OutputPrecision));
-                Console.WriteLine("Number of algorithm iterations: " + itr);
-                Console.WriteLine("Number of function cached calls: " + cachedCalls);
-                Console.WriteLine("Number of function evaluations: " + evaluations);
-                Console.WriteLine();
+                ConsoleEx.WriteLineGreen("Final position found. Returning value: x = " + v[vs].Format(PRECISION));
+                ConsoleEx.WriteLineGreen("Function value of final position is: " + function.Value(v[vs]).ToString("F" + PRECISION));
+                ConsoleEx.WriteLine("Number of algorithm iterations: " + itr);
+                ConsoleEx.WriteLine("Number of function cached calls: " + cachedCalls);
+                ConsoleEx.WriteLine("Number of function evaluations: " + evaluations);
+                ConsoleEx.WriteLine();
             }
 
             return v[vs];

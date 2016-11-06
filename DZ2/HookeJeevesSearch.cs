@@ -7,46 +7,18 @@ namespace APR.DZ2
 {
     public class HookeJeevesSearch : IMinimizer
     {
-        private const int OutputPrecision = 10;
-
-        private static readonly double[] DEFAULT_DX = new double[] { 0.5, 0.5 };
-        private static readonly double[] DEFAULT_E = new double[] {10e-6, 10e-6};
-
-        private readonly double[] _dx;
-        private readonly double[] _e;
+        public static readonly int PRECISION = 6;
+        public static readonly double EPSILON = Math.Pow(10, -PRECISION);
+        private static readonly double DEFAULT_DX = 0.5;
+        private static readonly double DEFAULT_E = EPSILON;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="HookeJeevesSearch"/> class.
         /// </summary>
-        public HookeJeevesSearch() : this(DEFAULT_DX, DEFAULT_E)
+        public HookeJeevesSearch()
         {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="HookeJeevesSearch"/> class.
-        /// </summary>
-        public HookeJeevesSearch(double[] dx, double[] e)
-        {
-            if (dx == null)
-            {
-                throw new ArgumentNullException(nameof(dx));
-            }
-
-            if (e == null)
-            {
-                throw new ArgumentNullException(nameof(e));
-            }
-
-            if (dx.Length != e.Length)
-            {
-                throw new ArgumentException("Dimensions do not match.");
-            }
-
             IsOutputPerIterationEnabled = true;
             IsOutputEnabled = true;
-
-            _dx = dx;
-            _e = e;
         }
 
         /// <summary>
@@ -75,18 +47,21 @@ namespace APR.DZ2
             // Clear f
             f.Clear();
 
+            double[] dx = new double[start.Length].Fill(DEFAULT_DX);
+            double[] e = new double[start.Length].Fill(DEFAULT_E);
+
             if (IsOutputEnabled)
             {
-                Console.WriteLine();
-                Console.WriteLine("****************************************************************");
-                Console.WriteLine("Starting minimization with Hooke-Jeeves Pattern Search method...");
+                ConsoleEx.WriteLine();
+                ConsoleEx.WriteLineGreen("****************************************************************");
+                ConsoleEx.WriteLineGreen("Starting minimization with Hooke-Jeeves Pattern Search method...");
 
-                Console.WriteLine();
-                Console.WriteLine("Parameters: ");
-                Console.WriteLine("dx = " + _dx.Format(OutputPrecision));
-                Console.WriteLine("e = " + _e.Format(OutputPrecision));
-                Console.WriteLine("x0 = " + start.Format(OutputPrecision));
-                Console.WriteLine();
+                ConsoleEx.WriteLine();
+                ConsoleEx.WriteLine("Parameters: ");
+                ConsoleEx.WriteLine("dx = " + dx.Format(PRECISION));
+                ConsoleEx.WriteLine("e = " + e.Format(PRECISION));
+                ConsoleEx.WriteLine("x0 = " + start.Format(PRECISION));
+                ConsoleEx.WriteLine();
             }
 
             int iterations = 0;
@@ -94,8 +69,7 @@ namespace APR.DZ2
             double[] x0 = start.Copy();
             double[] xb = x0.Copy();
             double[] xp = x0.Copy();
-            double[] dx = _dx.Copy();
-
+            
             do
             {
                 iterations++;
@@ -122,14 +96,16 @@ namespace APR.DZ2
 
                 if (IsOutputPerIterationEnabled && IsOutputEnabled)
                 {
+                    f.DisableStatistics();
                     LogIteration(iterations, xb, xp, xn, f.Value(xb), f.Value(xp), f.Value(xn), dx);
+                    f.EnableStatistcs();
                 }
 
-            } while (dx.Where((t, i) => t > _e[i]).Any());
+            } while (dx.Where((t, i) => t > e[i]).Any());
 
             if (IsOutputPerIterationEnabled && IsOutputEnabled)
             {
-                Console.WriteLine();
+                ConsoleEx.WriteLine();
             }
 
             var evaluations = f.Evaluations;
@@ -137,12 +113,12 @@ namespace APR.DZ2
 
             if (IsOutputEnabled)
             {
-                Console.WriteLine("Final position found. Returning value: x = " + xb.Format(OutputPrecision));
-                Console.WriteLine("Function value of final position is: " + f.Value(xb).ToString("F" + OutputPrecision));
-                Console.WriteLine("Number of algorithm iterations: " + iterations);
-                Console.WriteLine("Number of function cached calls: " + cachedCalls);
-                Console.WriteLine("Number of function evaluations: " + evaluations);
-                Console.WriteLine(); 
+                ConsoleEx.WriteLineGreen("Final position found. Returning value: x = " + xb.Format(PRECISION));
+                ConsoleEx.WriteLineGreen("Function value of final position is: " + f.Value(xb).ToString("F" + PRECISION));
+                ConsoleEx.WriteLine("Number of algorithm iterations: " + iterations);
+                ConsoleEx.WriteLine("Number of function cached calls: " + cachedCalls);
+                ConsoleEx.WriteLine("Number of function evaluations: " + evaluations);
+                ConsoleEx.WriteLine(); 
             }
 
             return xb;
@@ -173,16 +149,16 @@ namespace APR.DZ2
 
         private void LogIteration(int iterations, double[] xb, double[] xp, double[] xn, double fxb, double fxp, double fxn, double[] dx)
         {
-            var precision = "F" + OutputPrecision;
+            var precision = "F" + PRECISION;
             Console.Write("[{0,3:D3}]", iterations);
-            Console.Write(" xb = " + xb.Format(OutputPrecision).PadRight(OutputPrecision + 4));
-            Console.Write(" xp = " + xp.Format(OutputPrecision).PadRight(OutputPrecision + 4));
-            Console.Write(" xn = " + xn.Format(OutputPrecision).PadRight(OutputPrecision + 4));
-            Console.Write(" f(xb) = " + fxb.ToString(precision).PadRight(OutputPrecision + 4));
-            Console.Write(" f(xp) = " + fxp.ToString(precision).PadRight(OutputPrecision + 4));
-            Console.Write(" f(xn) = " + fxn.ToString(precision).PadRight(OutputPrecision + 4));
-            Console.Write(" dx = " + dx.Format(OutputPrecision).PadRight(OutputPrecision + 4));
-            Console.WriteLine();
+            ConsoleEx.Write(" xb = " + xb.Format(PRECISION).PadRight(PRECISION + 4));
+            ConsoleEx.Write(" xp = " + xp.Format(PRECISION).PadRight(PRECISION + 4));
+            ConsoleEx.Write(" xn = " + xn.Format(PRECISION).PadRight(PRECISION + 4));
+            ConsoleEx.Write(" f(xb) = " + fxb.ToString(precision).PadRight(PRECISION + 4));
+            ConsoleEx.Write(" f(xp) = " + fxp.ToString(precision).PadRight(PRECISION + 4));
+            ConsoleEx.Write(" f(xn) = " + fxn.ToString(precision).PadRight(PRECISION + 4));
+            ConsoleEx.Write(" dx = " + dx.Format(PRECISION).PadRight(PRECISION + 4));
+            ConsoleEx.WriteLine();
         }
     }
 }

@@ -6,11 +6,10 @@ namespace APR.DZ2
 {
     public class GoldenSectionSearch
     {
-        private const int OutputPrecision = 10;
-
-        private readonly double EPSILON = 10e-6;
-        private readonly double UNIMODAL_OFFSET = 1.0;
-        private readonly double GOLDEN_RATIO = (Math.Sqrt(5.0) - 1) / 2.0;
+        public static readonly int PRECISION = 6;
+        public static readonly double EPSILON = Math.Pow(10, -PRECISION);
+        private static readonly double UNIMODAL_OFFSET = 1.0;
+        private static readonly double GOLDEN_RATIO = (Math.Sqrt(5.0) - 1) / 2.0;
 
         public GoldenSectionSearch()
         {
@@ -46,16 +45,16 @@ namespace APR.DZ2
 
             if (IsOutputEnabled)
             {
-                Console.WriteLine();
-                Console.WriteLine("**********************************************************");
-                Console.WriteLine("Starting minimization with Golden Section Search method...");
+                ConsoleEx.WriteLine();
+                ConsoleEx.WriteLineGreen("**********************************************************");
+                ConsoleEx.WriteLineGreen("Starting minimization with Golden Section Search method...");
 
-                Console.WriteLine();
-                Console.WriteLine("Parameters: ");
-                Console.WriteLine("EPSILON = " + EPSILON);
-                Console.WriteLine("K = " + GOLDEN_RATIO);
-                Console.WriteLine("Start interval = " + startingInterval.ToString(6));
-                Console.WriteLine();
+                ConsoleEx.WriteLine();
+                ConsoleEx.WriteLine("Parameters: ");
+                ConsoleEx.WriteLine("EPSILON = " + EPSILON);
+                ConsoleEx.WriteLine("K = " + GOLDEN_RATIO);
+                ConsoleEx.WriteLine("Start interval = " + startingInterval.ToString(6));
+                ConsoleEx.WriteLine();
             }
 
             var lowerBound = startingInterval.Lower;
@@ -94,7 +93,9 @@ namespace APR.DZ2
                 iterations++;
                 if (IsOutputPerIterationEnabled && IsOutputEnabled)
                 {
+                    f.DisableStatistics();
                     LogIteration(iterations, lowerBound, upperBound, c, d, fc, fd);
+                    f.EnableStatistcs();
                 }
             }
 
@@ -104,17 +105,17 @@ namespace APR.DZ2
 
             if (IsOutputPerIterationEnabled && IsOutputEnabled)
             {
-                Console.WriteLine();
+                ConsoleEx.WriteLine();
             }
 
             if (IsOutputEnabled)
             {
-                Console.WriteLine("Final position found. Returning value: " + finalPosition.ToString("F" + OutputPrecision));
-                Console.WriteLine("Function value of final position is: " + f.Value(finalPosition).ToString("F" + OutputPrecision));
-                Console.WriteLine("Number of algorithm iterations: " + iterations);
-                Console.WriteLine("Number of function cached calls: " + cachedCalls);
-                Console.WriteLine("Number of function evaluations: " + evaluations);
-                Console.WriteLine(); 
+                ConsoleEx.WriteLineGreen("Final position found. Returning value: " + finalPosition.ToString("F" + PRECISION));
+                ConsoleEx.WriteLineGreen("Function value of final position is: " + f.Value(finalPosition).ToString("F" + PRECISION));
+                ConsoleEx.WriteLine("Number of algorithm iterations: " + iterations);
+                ConsoleEx.WriteLine("Number of function cached calls: " + cachedCalls);
+                ConsoleEx.WriteLine("Number of function evaluations: " + evaluations);
+                ConsoleEx.WriteLine(); 
             }
 
             return finalPosition;
@@ -127,15 +128,15 @@ namespace APR.DZ2
 
         private void LogIteration(int iteration, double a, double b, double c, double d, double fc, double fd)
         {
-            var precision = "F" + OutputPrecision;
+            var precision = "F" + PRECISION;
             Console.Write("[{0,3:D3}]", iteration);
-            Console.Write(" a = " + a.ToString(precision).PadRight(OutputPrecision + 4));
-            Console.Write(" b = " + b.ToString(precision).PadRight(OutputPrecision + 4));
-            Console.Write(" c = " + c.ToString(precision).PadRight(OutputPrecision + 4));
-            Console.Write(" d = " + d.ToString(precision).PadRight(OutputPrecision + 4));
-            Console.Write(" f(c) = " + fc.ToString(precision).PadRight(OutputPrecision + 4));
-            Console.Write(" f(d) = " + fd.ToString(precision).PadRight(OutputPrecision + 4));
-            Console.WriteLine();
+            ConsoleEx.Write(" a = " + a.ToString(precision).PadRight(PRECISION + 4));
+            ConsoleEx.Write(" b = " + b.ToString(precision).PadRight(PRECISION + 4));
+            ConsoleEx.Write(" c = " + c.ToString(precision).PadRight(PRECISION + 4));
+            ConsoleEx.Write(" d = " + d.ToString(precision).PadRight(PRECISION + 4));
+            ConsoleEx.Write(" f(c) = " + fc.ToString(precision).PadRight(PRECISION + 4));
+            ConsoleEx.Write(" f(d) = " + fd.ToString(precision).PadRight(PRECISION + 4));
+            ConsoleEx.WriteLine();
         }
 
         private Interval FindUnimodal(Function f, double h, double x)
