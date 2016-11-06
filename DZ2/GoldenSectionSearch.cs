@@ -13,6 +13,7 @@ namespace APR.DZ2
 
         public GoldenSectionSearch()
         {
+            IsOutputEnabled = true;
             IsOutputPerIterationEnabled = true;
         }
 
