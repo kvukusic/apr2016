@@ -40,6 +40,16 @@ namespace APR.DZ1.Extensions
             return sb.ToString();
         }
 
+        public static double[] Fill(this double[] src, double value)
+        {
+            for (int i = 0; i < src.Length; i++)
+            {
+                src[i] = value;
+            }
+            
+            return src;
+        }
+
         public static Vector ToVector(this double[] src)
         {
             return new Vector(src.Copy());
