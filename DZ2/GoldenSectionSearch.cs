@@ -85,7 +85,7 @@ namespace APR.DZ2
 
             if (IsOutputPerIterationEnabled && IsOutputEnabled)
             {
-                LogIteration(iterations, lowerBound, upperBound, c, d, fc, fd);
+                LogIteration(iterations, lowerBound, upperBound, c, d, f.Value(lowerBound), f.Value(upperBound), fc, fd);
             }
 
             while(upperBound - lowerBound > eps)
@@ -110,7 +110,7 @@ namespace APR.DZ2
                 if (IsOutputPerIterationEnabled && IsOutputEnabled)
                 {
                     f.DisableStatistics();
-                    LogIteration(iterations, lowerBound, upperBound, c, d, fc, fd);
+                    LogIteration(iterations, lowerBound, upperBound, c, d, f.Value(lowerBound), f.Value(upperBound), fc, fd);
                     f.EnableStatistcs();
                 }
             }
@@ -142,16 +142,18 @@ namespace APR.DZ2
             return (upper + lower) / 2.0;
         }
 
-        private void LogIteration(int iteration, double a, double b, double c, double d, double fc, double fd)
+        private void LogIteration(int iteration, double a, double b, double c, double d, double fa, double fb, double fc, double fd)
         {
             var precision = "F" + PRECISION;
             Console.Write("[{0,3:D3}]", iteration);
             ConsoleEx.Write(" a = " + a.ToString(precision).PadRight(PRECISION + 4));
-            ConsoleEx.Write(" b = " + b.ToString(precision).PadRight(PRECISION + 4));
             ConsoleEx.Write(" c = " + c.ToString(precision).PadRight(PRECISION + 4));
             ConsoleEx.Write(" d = " + d.ToString(precision).PadRight(PRECISION + 4));
+            ConsoleEx.Write(" b = " + b.ToString(precision).PadRight(PRECISION + 4));
+            ConsoleEx.Write(" f(a) = " + fa.ToString(precision).PadRight(PRECISION + 4));
             ConsoleEx.Write(" f(c) = " + fc.ToString(precision).PadRight(PRECISION + 4));
             ConsoleEx.Write(" f(d) = " + fd.ToString(precision).PadRight(PRECISION + 4));
+            ConsoleEx.Write(" f(b) = " + fb.ToString(precision).PadRight(PRECISION + 4));
             ConsoleEx.WriteLine();
         }
 
