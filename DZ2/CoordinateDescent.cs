@@ -31,7 +31,7 @@ namespace APR.DZ2
         public double[] Minimize(Function f, double[] start)
         {
             double[] eps = new double[start.Length].Fill(EPSILON);
-            return Minimize(f, start, null);
+            return Minimize(f, start, eps);
         }
 
         public double[] Minimize(Function f, double[] start, double[] eps)
