@@ -41,13 +41,17 @@ namespace APR.DZ2.Demo.Assignments
                 result.Add(new Tuple<string, string, string, string>((i + 1).ToString(),
                     opt1Evals.ToString() + " (min: " + item.Item1.Value(min1).ToString("F20") + ")",
                     opt2Evals.ToString() + " (min: " + item.Item1.Value(min2).ToString("F20") + ")",
-                    opt3Evals.ToString() + " (min: " + item.Item1.Value(min2).ToString("F20") + ")"));
+                    opt3Evals.ToString() + " (min: " + item.Item1.Value(min3).ToString("F20") + ")"));
             }
 
             Console.WriteLine(result.ToStringTable(
                 new[] {"Function", "Nelder and Mead", "Hooke-Jeeves", "Coordinate Descent"},
                 a => a.Item1, a => a.Item2, a => a.Item3, a => a.Item4));
             Console.WriteLine();
+
+            // Hooke-Jeeves will stuck at function F4 because of the nature of exploration which explores a better point only
+            // in one axis, not all at once, and because at point [3.1 3.1] only [2.975 2.975] is fitter, the algorithm
+            // can't determine that there is a better point in the environment
         }
     }
 }

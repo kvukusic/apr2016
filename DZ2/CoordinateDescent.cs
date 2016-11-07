@@ -12,11 +12,11 @@ namespace APR.DZ2
         public static readonly double EPSILON = Math.Pow(10, -PRECISION);
         private static readonly int MAX_ITERATIONS = 10000;
 
-        /// <summary>
-        /// The upper bound of the interval used in finding the optimal <c>lambda</c>
-        /// for the minimization function.
-        /// </summary>
-        private static readonly double INITIAL_GOLDEN_SECTION_INTERVAL = 0.01;
+        // /// <summary>
+        // /// The upper bound of the interval used in finding the optimal <c>lambda</c>
+        // /// for the minimization function.
+        // /// </summary>
+        // private static readonly double INITIAL_GOLDEN_SECTION_INTERVAL = 0.01;
 
         public bool IsOutputEnabled { get; set; }
 
@@ -136,7 +136,7 @@ namespace APR.DZ2
                 return f.Value(currentPoint.Select((xi, i) => xi + lambda[0]*identity[i]).ToArray());
             });
 
-            // Find the upper interval for the golden section line search
+            // // Find the upper interval for the golden section line search
             // var upper = INITIAL_GOLDEN_SECTION_INTERVAL;
             // var lower = -upper;
             // var functionValue = f.Value(currentPoint.AsArray());
