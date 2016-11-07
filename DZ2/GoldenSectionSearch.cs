@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using APR.DZ2.Functions;
 
 namespace APR.DZ2
@@ -31,14 +30,30 @@ namespace APR.DZ2
         public double Minimize(Function f, double start)
         {
             var startingInterval = FindUnimodal(f, UNIMODAL_OFFSET, start);
-            return Minimize(f, startingInterval);
+            return Minimize(f, startingInterval, EPSILON);
+        }
+
+        public double Minimize(Function f, double start, double eps)
+        {
+            var startingInterval = FindUnimodal(f, UNIMODAL_OFFSET, start);
+            return Minimize(f, startingInterval, eps);
         }
 
         public double Minimize(Function f, Interval startingInterval)
         {
+            return Minimize(f, startingInterval, EPSILON);
+        }
+
+        public double Minimize(Function f, Interval startingInterval, double eps)
+        {
             if (f == null)
             {
                 throw new ArgumentNullException(nameof(f));
+            }
+
+            if(eps < 0)
+            {
+                throw new ArgumentException("eps is less than zero");
             }
 
             // Clear f
@@ -52,7 +67,7 @@ namespace APR.DZ2
 
                 ConsoleEx.WriteLine();
                 ConsoleEx.WriteLine("Parameters: ");
-                ConsoleEx.WriteLine("EPSILON = " + EPSILON);
+                ConsoleEx.WriteLine("EPSILON = " + eps);
                 ConsoleEx.WriteLine("K = " + GOLDEN_RATIO);
                 ConsoleEx.WriteLine("Start interval = " + startingInterval.ToString(6));
                 ConsoleEx.WriteLine();
@@ -73,7 +88,7 @@ namespace APR.DZ2
                 LogIteration(iterations, lowerBound, upperBound, c, d, fc, fd);
             }
 
-            while(upperBound - lowerBound > EPSILON)
+            while(upperBound - lowerBound > eps)
             {
                 if(fc < fd)
                 {
