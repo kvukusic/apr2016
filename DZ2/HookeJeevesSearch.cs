@@ -32,7 +32,7 @@ namespace APR.DZ2
         /// </summary>
         public bool IsOutputEnabled { get; set; }
 
-        public double[] Minimize(Function f, double[] start)
+        public double[] Minimize(Function f, double[] start, double[] dx, double[] eps)
         {
             if (f == null)
             {
@@ -44,11 +44,23 @@ namespace APR.DZ2
                 throw new ArgumentNullException(nameof(start));
             }
 
+            if(dx == null)
+            {
+                throw new ArgumentNullException(nameof(dx));
+            }
+
+            if(eps == null)
+            {
+                throw new ArgumentNullException(nameof(eps));
+            }
+
+            if(start.Length != dx.Length || start.Length != eps.Length)
+            {
+                throw new ArgumentException("Invalid parameter dimension specified.");
+            }
+
             // Clear f
             f.Clear();
-
-            double[] dx = new double[start.Length].Fill(DEFAULT_DX);
-            double[] e = new double[start.Length].Fill(DEFAULT_E);
 
             if (IsOutputEnabled)
             {
@@ -59,7 +71,7 @@ namespace APR.DZ2
                 ConsoleEx.WriteLine();
                 ConsoleEx.WriteLine("Parameters: ");
                 ConsoleEx.WriteLine("dx = " + dx.Format(PRECISION));
-                ConsoleEx.WriteLine("e = " + e.Format(PRECISION));
+                ConsoleEx.WriteLine("e = " + eps.Format(PRECISION));
                 ConsoleEx.WriteLine("x0 = " + start.Format(PRECISION));
                 ConsoleEx.WriteLine();
             }
@@ -75,6 +87,14 @@ namespace APR.DZ2
                 iterations++;
 
                 double[] xn = Explore(f, xp, dx);
+
+                if (IsOutputPerIterationEnabled && IsOutputEnabled)
+                {
+                    f.DisableStatistics();
+                    LogIteration(iterations, xb, xp, xn, f.Value(xb), f.Value(xp), f.Value(xn), dx);
+                    f.EnableStatistcs();
+                }
+
                 if (f.Value(xn) < f.Value(xb))
                 {
                     for (int i = 0; i < xp.Length; i++)
@@ -94,14 +114,14 @@ namespace APR.DZ2
                     xp = xb.Copy();
                 }
 
-                if (IsOutputPerIterationEnabled && IsOutputEnabled)
-                {
-                    f.DisableStatistics();
-                    LogIteration(iterations, xb, xp, xn, f.Value(xb), f.Value(xp), f.Value(xn), dx);
-                    f.EnableStatistcs();
-                }
+                // if (IsOutputPerIterationEnabled && IsOutputEnabled)
+                // {
+                //     f.DisableStatistics();
+                //     LogIteration(iterations, xb, xp, xn, f.Value(xb), f.Value(xp), f.Value(xn), dx);
+                //     f.EnableStatistcs();
+                // }
 
-            } while (dx.Where((t, i) => t > e[i]).Any());
+            } while (dx.Where((t, i) => t > eps[i]).Any());
 
             if (IsOutputPerIterationEnabled && IsOutputEnabled)
             {
@@ -122,6 +142,14 @@ namespace APR.DZ2
             }
 
             return xb;
+        }
+
+        public double[] Minimize(Function f, double[] start)
+        {
+            double[] dx = new double[start.Length].Fill(DEFAULT_DX);
+            double[] e = new double[start.Length].Fill(DEFAULT_E);
+
+            return Minimize(f, start, dx, e);
         }
 
         private double[] Explore(Function f, double[] xp, double[] dx)
