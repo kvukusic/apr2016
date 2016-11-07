@@ -9,7 +9,7 @@ namespace APR.DZ2.Demo
             while(true)
             {
                 Console.WriteLine("================================");
-                Console.WriteLine("Enter assignment number [1 - 5]:");
+                Console.WriteLine("Enter assignment number [1 - 5] or [6] for custom configuration:");
                 int identifier = -1;
                 Int32.TryParse(Console.ReadLine(), out identifier);
 
