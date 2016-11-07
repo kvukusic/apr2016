@@ -30,15 +30,31 @@ namespace APR.DZ2
 
         public double[] Minimize(Function f, double[] start)
         {
+            double[] eps = new double[start.Length].Fill(EPSILON);
+            return Minimize(f, start, null);
+        }
+
+        public double[] Minimize(Function f, double[] start, double[] eps)
+        {
             if (f == null)
             {
                 throw new ArgumentNullException(nameof(f));
             }
 
+            if(eps == null)
+            {
+                throw new ArgumentNullException(nameof(eps));
+            }
+
+            if(start.Length != eps.Length)
+            {
+                throw new ArgumentException("Invalid parameter dimension.", nameof(eps));
+            }
+
             // Clear f
             f.Clear();
 
-            double[] e = new double[start.Length].Fill(EPSILON);
+            double[] e = eps.Copy();
 
             if (IsOutputEnabled)
             {
