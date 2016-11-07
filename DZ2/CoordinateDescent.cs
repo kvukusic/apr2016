@@ -121,25 +121,26 @@ namespace APR.DZ2
             });
 
             // Find the upper interval for the golden section line search
-            var upper = INITIAL_GOLDEN_SECTION_INTERVAL;
-            var lower = -upper;
-            var functionValue = f.Value(currentPoint.AsArray());
+            // var upper = INITIAL_GOLDEN_SECTION_INTERVAL;
+            // var lower = -upper;
+            // var functionValue = f.Value(currentPoint.AsArray());
 
-            // Double s until f(x + lambda*identity) > f(x)
-            while (f.Value(currentPoint.Select((xi, i) => xi + upper*identity[i]).ToArray()) <= functionValue)
-            {
-                upper *= 2;
-            }
+            // // Double s until f(x + lambda*identity) > f(x)
+            // while (f.Value(currentPoint.Select((xi, i) => xi + upper*identity[i]).ToArray()) <= functionValue)
+            // {
+            //     upper *= 2;
+            // }
 
-            // Double s until f(x - lambda*identity) > f(x)
-            while (f.Value(currentPoint.Select((xi, i) => xi + lower*identity[i]).ToArray()) <= functionValue)
-            {
-                lower *= 2;
-            }
+            // // Double s until f(x - lambda*identity) > f(x)
+            // while (f.Value(currentPoint.Select((xi, i) => xi + lower*identity[i]).ToArray()) <= functionValue)
+            // {
+            //     lower *= 2;
+            // }
 
             var minimizer = new GoldenSectionSearch();
             minimizer.IsOutputEnabled = false;
-            return minimizer.Minimize(g, new GoldenSectionSearch.Interval(lower, upper));
+            // return minimizer.Minimize(g, new GoldenSectionSearch.Interval(lower, upper));
+            return minimizer.Minimize(g, 0);
         }
     }
 }
