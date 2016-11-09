@@ -17,8 +17,7 @@ namespace APR.DZ2.Demo.Assignments
                 var opt = new NelderMeadSearch();
                 opt.IsOutputEnabled = false;
                 opt.IsOutputPerIterationEnabled = false;
-                opt.SimplexOffset = i;
-                double[] min = opt.Minimize(function, new double[] {0.5, 0.5});
+                double[] min = opt.Minimize(function, new double[] {0.5, 0.5}, i);
                 Console.WriteLine($"offset={i}, evals={function.Evaluations}, x_min={min.Format(16)}, f(x_min)={function.Value(min).ToString("F16")}");
                 function.Clear();
             }
@@ -32,8 +31,7 @@ namespace APR.DZ2.Demo.Assignments
                 var opt = new NelderMeadSearch();
                 opt.IsOutputEnabled = false;
                 opt.IsOutputPerIterationEnabled = false;
-                opt.SimplexOffset = i;
-                double[] min = opt.Minimize(function, new double[] { 20, 20 });
+                double[] min = opt.Minimize(function, new double[] { 20, 20 }, i);
                 Console.WriteLine($"offset={i}, evals={function.Evaluations}, x_min={min.Format(16)}, f(x_min)={function.Value(min).ToString("F16")}");
                 function.Clear();
             }

@@ -35,16 +35,23 @@ namespace APR.DZ2
         /// </summary>
         public bool IsOutputEnabled { get; set; }
 
-        /// <summary>
-        /// Gets or sets the offset which is used in generating the initial simplex.
-        /// </summary>
-        public double SimplexOffset
+        public double[] Minimize(Function function, double[] start)
         {
-            get { return SIMPLEX_OFFSET; }
-            set { SIMPLEX_OFFSET = value; }
+            return Minimize(function, start, EPSILON);
         }
 
-        public double[] Minimize(Function function, double[] start)
+        public double[] Minimize(Function function, double[] start, double offset)
+        {
+            return Minimize(function, start, EPSILON, offset);
+        }
+
+        public double[] Minimize(Function function, double[] start, double eps, double offset)
+        {
+            return Minimize(function, start, eps, offset, ALPHA, BETA, GAMMA, SIGMA);
+        }
+
+        public double[] Minimize(Function function, double[] start, double eps, double offset, 
+                                double alpha, double beta, double gamma, double sigma)
         {
             if (function == null)
             {
@@ -64,13 +71,6 @@ namespace APR.DZ2
             // Clear function
             function.Clear();
 
-            double alpha = ALPHA;
-            double beta = BETA;
-            double gamma = GAMMA;
-            double sigma = SIGMA;
-            double offset = SIMPLEX_OFFSET;
-            double epsilon = EPSILON;
-
             if (IsOutputEnabled)
             {
                 ConsoleEx.WriteLine();
@@ -80,7 +80,7 @@ namespace APR.DZ2
                 ConsoleEx.WriteLine();
                 ConsoleEx.WriteLine("Parameters: ");
                 ConsoleEx.WriteLine("x0 = " + start.Format(PRECISION));
-                ConsoleEx.WriteLine("eps = " + epsilon.ToString("F" + PRECISION));
+                ConsoleEx.WriteLine("eps = " + eps.ToString("F" + PRECISION));
                 ConsoleEx.WriteLine("alpha = " + alpha.ToString("F" + PRECISION));
                 ConsoleEx.WriteLine("beta = " + beta.ToString("F" + PRECISION));
                 ConsoleEx.WriteLine("gamma = " + gamma.ToString("F" + PRECISION));
@@ -203,7 +203,7 @@ namespace APR.DZ2
                 }
 
                 // Test for convergence
-                if(HasConverged(v, f, epsilon)) break;
+                if(HasConverged(v, f, eps)) break;
             }
             
             // Find the index of the smallest value
