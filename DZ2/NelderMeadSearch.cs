@@ -10,7 +10,7 @@ namespace APR.DZ2
     {
         public static readonly int PRECISION = 6;
         public static readonly double EPSILON = Math.Pow(10, -PRECISION);
-        private readonly int MAX_IT = 100000;
+        private readonly int MAX_ITERATIONS = 100000;
         private readonly double ALPHA = 1.0;
         private readonly double BETA = 0.5;
         private readonly double GAMMA = 2.0;
@@ -64,9 +64,15 @@ namespace APR.DZ2
             // Clear function
             function.Clear();
 
+            double alpha = ALPHA;
+            double beta = BETA;
+            double gamma = GAMMA;
+            double sigma = SIGMA;
+            double offset = SIMPLEX_OFFSET;
+            double epsilon = EPSILON;
+
             if (IsOutputEnabled)
             {
-
                 ConsoleEx.WriteLine();
                 ConsoleEx.WriteLineGreen("****************************************************************");
                 ConsoleEx.WriteLineGreen("Starting minimization with Nelder Mead Simplex Search method...");
@@ -74,295 +80,134 @@ namespace APR.DZ2
                 ConsoleEx.WriteLine();
                 ConsoleEx.WriteLine("Parameters: ");
                 ConsoleEx.WriteLine("x0 = " + start.Format(PRECISION));
-                ConsoleEx.WriteLine("alpha = " + ALPHA.ToString("F" + PRECISION));
-                ConsoleEx.WriteLine("beta = " + BETA.ToString("F" + PRECISION));
-                ConsoleEx.WriteLine("gamma = " + GAMMA.ToString("F" + PRECISION));
-                ConsoleEx.WriteLine("sigma = " + SIGMA.ToString("F" + PRECISION));
-                ConsoleEx.WriteLine("t = " + SIMPLEX_OFFSET.ToString("F" + PRECISION));
+                ConsoleEx.WriteLine("eps = " + epsilon.ToString("F" + PRECISION));
+                ConsoleEx.WriteLine("alpha = " + alpha.ToString("F" + PRECISION));
+                ConsoleEx.WriteLine("beta = " + beta.ToString("F" + PRECISION));
+                ConsoleEx.WriteLine("gamma = " + gamma.ToString("F" + PRECISION));
+                ConsoleEx.WriteLine("sigma = " + sigma.ToString("F" + PRECISION));
+                ConsoleEx.WriteLine("t = " + offset.ToString("F" + PRECISION));
                 ConsoleEx.WriteLine();
             }
-
-            int vs; // Vertex with smallest value
-            int vh; // Vertex with next smallest value
-            int vg; // Vertex with largest value
-
-            int i, j, m, row;
-            int itr; // Track the number of iterations
-
-            double[][] v; // Holds vertices of simplex
-            double pn, qn; // Values used to create initial simplex
-            double[] f; // Value of function at each vertex
-            double fr; // Value of function at reflection point
-            double fe; // Value of function at expansion point
-            double fc; // Value of function at contraction point
-            double[] vr; // Reflection - coordinates
-            double[] ve; // Expansion - coordinates
-            double[] vc; // Contraction - coordinates
-            double[] vm; // Centroid - coordinates
-
-            double fsum, favg, s, cent;
 
             // Dimension
             int n = start.Length;
 
-            // Allocate the rows of the arrays
-            v = new double[n+1][];
-            f = new double[n+1];
-            vr = new double[n];
-            ve = new double[n];
-            vc = new double[n];
-            vm = new double[n];
-
-            // Allocate the columns of the arrays
-            for (i = 0; i <= n; i++)
-            {
-                v[i] = new double[n];
-            }
-
             // Create the initial simplex
-            // Assume one of the vertices is 0,0
-            pn = SIMPLEX_OFFSET*(Math.Sqrt(n + 1) - 1 + n)/(n*Math.Sqrt(2));
-            qn = SIMPLEX_OFFSET*(Math.Sqrt(n + 1) - 1)/(n*Math.Sqrt(2));
+            double[][] v = CalculateInitialSimplex(start.Copy(), offset);
 
-            for (i = 0; i < n; i++)
-            {
-                v[0][i] = start[i];
-            }
+            // Evaluate function at each simplex point
+            double[] f = v.Select(xi => function.Value(xi)).ToArray();
 
-            for (i = 1; i <= n; i++)
-            {
-                for (j = 0; j < n; j++)
-                {
-                    if (i - 1 == j)
-                    {
-                        v[i][j] = pn + start[j];
-                    }
-                    else
-                    {
-                        v[i][j] = qn + start[j];
-                    }
-                }
-            }
-
-            // Find the initial function values
-            for (j = 0; j <= n; j++)
-            {
-                f[j] = function.Value(v[j]);
-            }
-
+            // Print out initial simplex
             if (IsOutputEnabled)
             {
-                // Print out the initial values
-                ConsoleEx.WriteLine("Initial Values:");
-                for (j = 0; j <= n; j++)
+                // Print out the initial simplex points
+                ConsoleEx.WriteLine("Initial simplex points:");
+                for (int i = 0; i <= n; i++)
                 {
-                    for (i = 0; i < n; i++)
-                    {
-                        ConsoleEx.WriteLine(v[j][i].ToString("F" + PRECISION) + " " +
-                                          f[j].ToString("F" + PRECISION));
-                    }
+                    ConsoleEx.Write($"x{i}={v[i].Format(PRECISION)}, ");
+                    ConsoleEx.Write($"f(x{i})={function.Value(v[i]).ToString("F" + PRECISION)}");
+                    ConsoleEx.WriteLine();
                 }
 
                 ConsoleEx.WriteLine();
             }
 
+            int iteration = 0;
+
             // Begin the main loop of the minimization
-            for (itr = 1; itr <= MAX_IT; itr++)
+            for (iteration = 1; iteration <= MAX_ITERATIONS; iteration++)
             {
-                // Find the index of the largest value
-                vg = 0;
-                for (j = 0; j <= n; j++)
-                {
-                    if (f[j] > f[vg])
-                    {
-                        vg = j;
-                    }
-                }
+                // Find the index of the highest value
+                int h = FindHighestValueIndex(f);
 
-                // Find the index of the smallest value
-                vs = 0;
-                for (j = 0; j <= n; j++)
-                {
-                    if (f[j] < f[vs])
-                    {
-                        vs = j;
-                    }
-                }
-
-                // Find the index of the second largest value
-                vh = vs;
-                for (j = 0; j <= n; j++)
-                {
-                    if (f[j] > f[vh] && f[j] < f[vg])
-                    {
-                        vh = j;
-                    }
-                }
+                // Find the index of the lowest value
+                int l = FindLowestValueIndex(f);
 
                 // Calculate the centroid
-                for (j = 0; j <= n - 1; j++)
-                {
-                    cent = 0.0;
-                    for (m = 0; m <= n; m++)
-                    {
-                        if (m != vg)
-                        {
-                            cent += v[m][j];
-                        }
-                    }
-                    vm[j] = cent / n;
-                }
+                double[] xc = CalculateCetroid(v, h);
 
-                // Reflect vg to new vertex vr
-                for (j = 0; j <= n - 1; j++)
-                {
-                    // vr[j] = (1+ALPHA)*vm[j] - ALPHA*v[vg][j];
-                    vr[j] = vm[j] + ALPHA * (vm[j] - v[vg][j]);
-                }
-                
-                fr = function.Value(vr);
+                // Calculate the reflection point
+                double[] xr = Reflection(v, xc, h, alpha);
+                double fxr = function.Value(xr);
 
-                if (fr < f[vh] && fr >= f[vs])
+                if(fxr < f[l])
                 {
-                    for (j = 0; j <= n - 1; j++)
-                    {
-                        v[vg][j] = vr[j];
-                    }
-                    f[vg] = fr;
-                }
+                    // Calculate the expansion point
+                    double[] xe = Expansion(xc, xr, gamma);
+                    double fxe = function.Value(xe);
 
-                // Investigate a step further in this direction
-                if (fr < f[vs])
-                {
-                    for (j = 0; j <= n - 1; j++)
+                    if(fxe < fxr) /* < f[l] */
                     {
-                        // ve[j] = GAMMA*vr[j] + (1-GAMMA)*vm[j];
-                        ve[j] = vm[j] + GAMMA * (vr[j] - vm[j]);
-                    }
-                    
-                    fe = function.Value(ve);
-
-                    // By making fe < fr as opposed to fe < f[vs],
-                    // Rosenbrocks function takes 63 iterations as opposed 
-                    // to 64 when using double variables.
-                    if (fe < fr)
-                    {
-                        for (j = 0; j <= n - 1; j++)
-                        {
-                            v[vg][j] = ve[j];
-                        }
-                        f[vg] = fe;
+                        v[h] = xe;
+                        f[h] = fxe;
                     }
                     else
                     {
-                        for (j = 0; j <= n - 1; j++)
-                        {
-                            v[vg][j] = vr[j];
-                        }
-
-                        f[vg] = fr;
+                        v[h] = xr;
+                        f[h] = fxr;
                     }
                 }
-
-                // Check to see if a contraction is necessary
-                if (fr >= f[vh])
+                else
                 {
-                    if (fr < f[vg] && fr >= f[vh])
-                    {
-                        // Perform outside contraction
-                        for (j = 0; j <= n - 1; j++)
-                        {
-                            // vc[j] = BETA*v[vg][j] + (1-BETA)*vm[j];
-                            vc[j] = vm[j] + BETA * (vr[j] - vm[j]);
-                        }
-                        
-                        fc = function.Value(vc);
-                    }
-                    else {
-                        // Perform inside contraction
-                        for (j = 0; j <= n - 1; j++)
-                        {
-                            // vc[j] = BETA*v[vg][j] + (1-BETA)*vm[j];
-                            vc[j] = vm[j] - BETA * (vm[j] - v[vg][j]);
-                        }
-                        
-                        fc = function.Value(vc);
-                    }
 
-
-                    if (fc < f[vg])
+                    // if(fxr > fxi) for every i != h
+                    if(f.Where((fxi, i) => (i != h) && fxr >= fxi).Count() == n) // fxr > fxi
                     {
-                        for (j = 0; j <= n - 1; j++)
+                        if(fxr < f[h])
                         {
-                            v[vg][j] = vc[j];
+                            v[h] = xr;
+                            f[h] = fxr;
                         }
 
-                        f[vg] = fc;
-                    }
+                        double[] xk = Contraction(v, xc, h, beta);
+                        double fxk = function.Value(xk);
 
-                    // At this point the contraction is not successful,
-                    // we must halve the distance from vs to all the 
-                    // vertices of the simplex and then continue.
-                    else
-                    {
-                        for (row = 0; row <= n; row++)
+                        if(fxk < f[h])
                         {
-                            if (row != vs)
+                            v[h] = xk;
+                            f[h] = fxk;
+                        }
+                        else
+                        {
+                            // Shrink all but the best (xl) simplex points 
+                            // xi = SIGMA * (xl + xi)
+                            for (int i = 0; i <= n; i++)
                             {
-                                for (j = 0; j <= n - 1; j++)
+                                if(i != l)
                                 {
-                                    v[row][j] = v[vs][j] + (v[row][j] - v[vs][j]) * SIGMA;
+                                    for (int j = 0; j < n; j++)
+                                    {
+                                        v[i][j] = sigma * (v[l][j] + v[i][j]);
+                                    }
                                 }
                             }
+
+                            // Evaluate function at each simplex point
+                            f = v.Select(xi => function.Value(xi)).ToArray();
                         }
-                        
-                        f[vg] = function.Value(v[vg]);
-                        f[vh] = function.Value(v[vh]);
+                    }
+                    else
+                    {
+                        v[h] = xr;
+                        f[h] = fxr;
                     }
                 }
 
                 // Print out the value at each iteration
                 if (IsOutputPerIterationEnabled && IsOutputEnabled)
                 {
-                    Console.WriteLine("Iteration {0}:", itr);
-                    //for (j = 0; j <= n; j++)
-                    //{
-                    //    for (i = 0; i < n; i++)
-                    //    {
-                    //        ConsoleEx.WriteLine(v[j][i].ToString("F" + OutputPrecision) + " " +
-                    //                          f[j].ToString("F" + OutputPrecision));
-                    //    }
-                    //}
-
-                    ConsoleEx.WriteLine("Xc: " + vm.Format(PRECISION) + ", f(Xc): " + function.Value(vm).ToString("F" + PRECISION));
+                    function.DisableStatistics();
+                    LogIteration(iteration, xc, function.Value(xc));
+                    function.EnableStatistcs();
                 }
 
                 // Test for convergence
-                fsum = 0.0;
-                for (j = 0; j <= n; j++)
-                {
-                    fsum += f[j];
-                }
-                favg = fsum / (n + 1);
-                s = 0.0;
-                for (j = 0; j <= n; j++)
-                {
-                    s += Math.Pow((f[j] - favg), 2.0) / n;
-                }
-                s = Math.Sqrt(s);
-                if (s < EPSILON) break;
+                if(HasConverged(v, f, epsilon)) break;
             }
-            // End main loop of the minimization
-
+            
             // Find the index of the smallest value
-            vs = 0;
-            for (j = 0; j <= n; j++)
-            {
-                if (f[j] < f[vs])
-                {
-                    vs = j;
-                }
-            }
+            double[] xmin = v[FindLowestValueIndex(f)];
 
             if (IsOutputPerIterationEnabled && IsOutputEnabled)
             {
@@ -373,15 +218,164 @@ namespace APR.DZ2
             {
                 var evaluations = function.Evaluations;
                 var cachedCalls = function.CachedCalls;
-                ConsoleEx.WriteLineGreen("Final position found. Returning value: x = " + v[vs].Format(PRECISION));
-                ConsoleEx.WriteLineGreen("Function value of final position is: " + function.Value(v[vs]).ToString("F" + PRECISION));
-                ConsoleEx.WriteLine("Number of algorithm iterations: " + itr);
+                ConsoleEx.WriteLineGreen("Final position found. Returning value: x = " + xmin.Format(PRECISION));
+                if(iteration == MAX_ITERATIONS) ConsoleEx.WriteLineRed($"Maximum number of iterations were hit [{MAX_ITERATIONS}]");
+                ConsoleEx.WriteLineGreen("Function value of final position is: " + function.Value(xmin).ToString("F" + PRECISION));
+                ConsoleEx.WriteLine("Number of algorithm iterations: " + iteration);
                 ConsoleEx.WriteLine("Number of function cached calls: " + cachedCalls);
                 ConsoleEx.WriteLine("Number of function evaluations: " + evaluations);
                 ConsoleEx.WriteLine();
             }
 
-            return v[vs];
+            return xmin;
+        }
+
+        private int FindHighestValueIndex(double[] values)
+        {
+            int h = 0;
+            for (int i = 0; i < values.Length; i++)
+            {
+                if (values[i] > values[h])
+                {
+                    h = i;
+                }
+            }
+            return h;
+        }
+
+        private int FindLowestValueIndex(double[] values)
+        {
+            int l = 0;
+            for (int i = 0; i < values.Length; i++)
+            {
+                if (values[i] < values[l])
+                {
+                    l = i;
+                }
+            }
+            return l;
+        }
+
+        private double[][] CalculateInitialSimplex(double[] start, double offset)
+        {
+            int n = start.Length;
+            double pn = offset*(Math.Sqrt(n + 1) - 1 + n)/(n*Math.Sqrt(2));
+            double qn = offset*(Math.Sqrt(n + 1) - 1)/(n*Math.Sqrt(2));
+
+            double[][] simplex = new double[n + 1][];
+
+            simplex[0] = start;
+            for (int i = 1; i <= n; i++)
+            {
+                simplex[i] = new double[n];
+                for (int j = 0; j < n; j++)
+                {
+                    if (i - 1 == j)
+                    {
+                        simplex[i][j] = pn + start[j];
+                    }
+                    else
+                    {
+                        simplex[i][j] = qn + start[j];
+                    }
+                }
+            }
+
+            return simplex;
+        }
+
+        private double[] CalculateCetroid(double[][] v, int h)
+        {
+            int n = v.Length - 1;
+
+            // xc = 1/n*(xj), j != h
+            double[] xc = new double[n];
+            for (int i = 0; i < n; i++)
+            {
+                double cent = 0.0;
+                for (int j = 0; j <= n; j++)
+                {
+                    if (j != h)
+                    {
+                        cent += v[j][i];
+                    }
+                }
+                xc[i] = cent / n;
+            }
+
+            return xc;
+        }
+
+        private double[] Reflection(double[][] v, double[] xc, int h, double alpha)
+        {
+            int n = v.Length - 1;
+
+            // xr = (1+ALPHA)*xc - ALPHA*(xh)
+            double[] xr = new double[n];
+            for (int i = 0; i < n; i++)
+            {
+                xr[i] = (1 + alpha)*xc[i] - alpha*v[h][i];
+            }
+
+            return xr;
+        }
+
+        private double[] Expansion(double[] xc, double[] xr, double gamma)
+        {
+            int n = xc.Length;
+
+            // xe = (1-GAMMA)*xc + GAMMA*xr
+            double[] xe = new double[n];
+            for (int i = 0; i < n; i++)
+            {
+                xe[i] = (1 - gamma) * xc[i] + gamma * xr[i];
+            }
+
+            return xe;
+        }
+
+        private double[] Contraction(double[][] v, double[] xc, int h, double beta)
+        {
+            int n = v.Length - 1;
+
+            // xk = (1-BETA)*xc + BETA*xh
+            double[] xk = new double[n];
+            for (int i = 0; i < n; i++)
+            {
+                xk[i] = (1 - beta)*xc[i] + beta*v[h][i];
+            }
+
+            return xk;
+        }
+
+        private bool HasConverged(double[][] v, double[] f, double eps)
+        {
+            int n = v.Length - 1;
+
+            double sum = 0.0;
+            for (int i = 0; i <= n; i++)
+            {
+                sum += f[i];
+            }
+            double favg = sum / (n + 1);
+            double s = 0.0;
+            for (int j = 0; j <= n; j++)
+            {
+                s += Math.Pow((f[j] - favg), 2.0) / n;
+            }
+            s = Math.Sqrt(s);
+            if (s < EPSILON) return true;
+
+            return false;
+        }
+
+        private void LogIteration(int iteration, double[] xc, double fxc)
+        {
+            var precision = "F" + PRECISION;
+            Console.Write("[{0,3:D3}]", iteration);
+            ConsoleEx.Write(" xc = " + xc.Format(PRECISION).PadRight(PRECISION + 4));
+            ConsoleEx.Write(" f(xc) = " + fxc.ToString(precision).PadRight(PRECISION + 4));
+            ConsoleEx.WriteLine();
         }
     }
 }
