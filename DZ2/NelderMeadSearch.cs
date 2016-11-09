@@ -37,20 +37,20 @@ namespace APR.DZ2
 
         public double[] Minimize(Function function, double[] start)
         {
-            return Minimize(function, start, EPSILON);
+            return Minimize(function, start, SIMPLEX_OFFSET);
         }
 
         public double[] Minimize(Function function, double[] start, double offset)
         {
-            return Minimize(function, start, EPSILON, offset);
+            return Minimize(function, start, offset, EPSILON);
         }
 
-        public double[] Minimize(Function function, double[] start, double eps, double offset)
+        public double[] Minimize(Function function, double[] start, double offset, double eps)
         {
-            return Minimize(function, start, eps, offset, ALPHA, BETA, GAMMA, SIGMA);
+            return Minimize(function, start, offset, eps, ALPHA, BETA, GAMMA, SIGMA);
         }
 
-        public double[] Minimize(Function function, double[] start, double eps, double offset, 
+        public double[] Minimize(Function function, double[] start, double offset, double eps, 
                                 double alpha, double beta, double gamma, double sigma)
         {
             if (function == null)
