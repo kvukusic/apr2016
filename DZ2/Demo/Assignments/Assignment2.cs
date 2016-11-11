@@ -38,10 +38,20 @@ namespace APR.DZ2.Demo.Assignments
                 var min3 = opt3.Minimize(item.Item1, item.Item2.Copy());
                 var opt3Evals = item.Item1.Evaluations;
 
+                int outputPrecision = 6;
+
                 result.Add(new Tuple<string, string, string, string>((i + 1).ToString(),
-                    opt1Evals.ToString() + " (min: " + item.Item1.Value(min1).ToString("F20") + ")",
-                    opt2Evals.ToString() + " (min: " + item.Item1.Value(min2).ToString("F20") + ")",
-                    opt3Evals.ToString() + " (min: " + item.Item1.Value(min3).ToString("F20") + ")"));
+                    "min: " + min1.Format(outputPrecision),
+                    "min: " + min2.Format(outputPrecision),
+                    "min: " + min3.Format(outputPrecision)));
+                result.Add(new Tuple<string, string, string, string>(string.Empty,
+                    "f(min): " + item.Item1.Value(min1).ToString("F" + outputPrecision),
+                    "f(min): " + item.Item1.Value(min2).ToString("F" + outputPrecision),
+                    "f(min): " + item.Item1.Value(min3).ToString("F" + outputPrecision)));
+                result.Add(new Tuple<string, string, string, string>(string.Empty,
+                    "evals: " + opt1Evals.ToString(),
+                    "evals: " + opt2Evals.ToString(),
+                    "evals: " + opt3Evals.ToString()));
             }
 
             Console.WriteLine(result.ToStringTable(
