@@ -179,12 +179,13 @@ namespace APR.DZ2
                                     for (int j = 0; j < n; j++)
                                     {
                                         v[i][j] = sigma * (v[l][j] + v[i][j]);
+                                        f[i] = function.Value(v[i][j]);
                                     }
                                 }
                             }
 
                             // Evaluate function at each simplex point
-                            f = v.Select(xi => function.Value(xi)).ToArray();
+                            // f = v.Select(xi => function.Value(xi)).ToArray();
                         }
                     }
                     else
