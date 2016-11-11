@@ -8,6 +8,7 @@ namespace APR.DZ2.Demo.Assignments
         public void Run()
         {
             var function = new F3();
+            // var function = new DelegateFunction(x => Math.Pow(x[0] - 3, 2));
 
             for (int i = 10; i <= 15; i++)
             {
