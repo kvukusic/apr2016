@@ -168,12 +168,12 @@ namespace APR.DZ2.Functions
 
         protected abstract double ValueEx(params double[] x);
 
-        protected double[] GradientEx(params double[] x)
+        protected virtual double[] GradientEx(params double[] x)
         {
             return null;
         }
 
-        protected Matrix HessianEx(params double[] x)
+        protected virtual Matrix HessianEx(params double[] x)
         {
             return null;
         }

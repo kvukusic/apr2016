@@ -1,21 +1,28 @@
 ﻿using System;
+using System.Linq;
 using APR.DZ1;
+using APR.DZ1.Extensions;
 
 namespace APR.DZ2.Functions
 {
     /// <summary>
-    /// <para>f(X) = (x1 - 4)^2 + 4*(x2 - 2)^2</para>
-    /// <para>X0 = [0.1, 0.3]</para>
-    /// <para>X_min = [4, 2]</para>
+    /// <para>f(X) = sum_i(x_i - parameters[i])^2</para>
+    /// <para>X0 = [0, 0, ...]</para>
+    /// <para>X_min = [-parameters[0], -parameters[1], ..., -parameters[n-1]]</para>
     /// <para>f(X_min) = 0</para>
     /// </summary>
-    public class F2 : Function
+    public class F5 : Function
     {
+        private double[] _parameters;
+
+        public F5(params double[] parameters)
+        {
+            _parameters = parameters.Copy();
+        }
+
         protected override double ValueEx(params double[] x)
         {
-            var x1 = x[0];
-            var x2 = x[1];
-            return Math.Pow(x1 - 4, 2) + 4 * Math.Pow(x2 - 2, 2);
+            return x.Select((t, i) => Math.Pow(t - _parameters[i], 2)).Sum();
         }
 
         protected override double[] GradientEx(params double[] x)
@@ -25,17 +32,16 @@ namespace APR.DZ2.Functions
 
             return new double[]
             {
-                2*x1-8,
-                8*x2 - 16
+                2*x1 - _parameters[0],
+                2*x2 - _parameters[1]
             };
         }
 
         protected override Matrix HessianEx(params double[] x)
         {
             Matrix result = new Matrix(2,2);
-            result[0][0] = 2;
+            result[0][0] = result[1][1] = 2;
             result[0][1] = result[1][0] = 0;
-            result[1][1] = 8;
             return result;
         }
     }
