@@ -32,8 +32,8 @@ namespace APR.DZ2.Functions
 
             return new double[]
             {
-                2*x1 - _parameters[0],
-                2*x2 - _parameters[1]
+                2*(x1 - _parameters[0]),
+                2*(x2 - _parameters[1])
             };
         }
 
