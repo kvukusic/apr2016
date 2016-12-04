@@ -365,7 +365,7 @@ namespace APR.DZ2
                 s += Math.Pow((f[j] - favg), 2.0) / n;
             }
             s = Math.Sqrt(s);
-            if (s < EPSILON) return true;
+            if (s < eps) return true;
 
             return false;
         }
