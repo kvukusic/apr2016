@@ -41,6 +41,17 @@ namespace APR.DZ1
             }
         }
 
+        public Matrix(Vector vector)
+        {
+            _rows = vector.Dimension;
+            _cols = 1;
+            _elements = new double[_rows][];
+            for (int r = 0; r < _rows; r++)
+            {
+                _elements[r] = new double[1] {vector[r]};
+            }
+        }
+
         public Matrix(string fileName)
         {
             if (fileName == null)
@@ -179,6 +190,16 @@ namespace APR.DZ1
             return retval;
         }
 
+        public Vector GetColumnVector(int column)
+        {
+            var retval = new Vector(_rows);
+            for (int r = 0; r < _rows; r++)
+            {
+                retval[r] = this[r][column];
+            }
+            return retval;
+        }
+
         public void SetColumn(int column, Matrix columnMatrix)
         {
             if (!columnMatrix.IsColumnVector())
@@ -306,6 +327,44 @@ namespace APR.DZ1
             return result;
         }
 
+        public Matrix ToInverseMatrix()
+        {
+            if(!IsSquareMatrix())
+            {
+                throw new ArgumentException("Square matrix required.");
+            }
+
+            try
+            {
+                // Create identity matrix
+                Matrix e = Matrix.Identity(_rows);
+
+                // LUP decomposition of A
+                var lupDecomposition = new LUPDecomposition();
+                lupDecomposition.PrintOutput = false;
+                lupDecomposition.Decompose(this.Copy());
+
+                Matrix l = lupDecomposition.L;
+                Matrix u = lupDecomposition.U;
+                Matrix p = lupDecomposition.P;
+
+                Matrix result = new Matrix(_rows, _cols);
+
+                for (int c = 0; c < result._cols; c++)
+                {
+                    Matrix y = LinearEquationSolver.SubstituteForward(l, p*e.GetColumn(c));
+                    Matrix x = LinearEquationSolver.SubstituteBackward(u, y);
+                    result.SetColumn(c, x);
+                }
+
+                return result;
+            }
+            catch (Exception)
+            {
+                throw new ArgumentException("Matrix is singular.");
+            }
+        }
+
         #region Static Factory
             
         public static Matrix Identity(int dim)
@@ -392,6 +451,16 @@ namespace APR.DZ1
             }
 
             return result;
+        }
+
+        public static Matrix operator *(Matrix lhs, Vector rhs)
+        {
+            if (lhs._cols != rhs.Dimension)
+            {
+                throw new ArgumentException("Matrix and vector are incomaptible for multiplication.");
+            }
+
+            return lhs * new Matrix(rhs);
         }
 
         public static Matrix operator *(double lhs, Matrix rhs)
