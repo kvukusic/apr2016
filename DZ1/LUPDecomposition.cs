@@ -4,15 +4,24 @@ namespace APR.DZ1
 {
     public class LUPDecomposition : IDecomposition
     {
+        public bool PrintOutput { get; set; } = true;
+
         public bool Decompose(Matrix matrix)
         {
-            ConsoleEx.WriteLine();
-            ConsoleEx.WriteLineGreen("Starting LUP decomposition of matrix:");
-            ConsoleEx.WriteLine(matrix.ToString());
+            if(PrintOutput)
+            {
+                ConsoleEx.WriteLine();
+                ConsoleEx.WriteLineGreen("Starting LUP decomposition of matrix:");
+                ConsoleEx.WriteLine(matrix.ToString());
+            }
 
             if (!matrix.IsSquareMatrix())
             {
-                ConsoleEx.WriteLineRed("LUP decomposition not possible on non-square matrix.");
+                if(PrintOutput)
+                {
+                    ConsoleEx.WriteLineRed("LUP decomposition not possible on non-square matrix.");
+                }
+                
                 return false;
             }
 
@@ -79,14 +88,17 @@ namespace APR.DZ1
                 P[i][p[i]] = 1.0;
             }
 
-            ConsoleEx.WriteLineGreen();
-            ConsoleEx.WriteLineGreen("LUP decomposition successfull:");
-            ConsoleEx.WriteLine("L:");
-            ConsoleEx.WriteLine(L.ToString());
-            ConsoleEx.WriteLine("U:");
-            ConsoleEx.WriteLine(U.ToString());
-            ConsoleEx.WriteLine("P:");
-            ConsoleEx.WriteLine(P.ToString());
+            if(PrintOutput)
+            {
+                ConsoleEx.WriteLineGreen();
+                ConsoleEx.WriteLineGreen("LUP decomposition successfull:");
+                ConsoleEx.WriteLine("L:");
+                ConsoleEx.WriteLine(L.ToString());
+                ConsoleEx.WriteLine("U:");
+                ConsoleEx.WriteLine(U.ToString());
+                ConsoleEx.WriteLine("P:");
+                ConsoleEx.WriteLine(P.ToString());
+            }
 
             return true;
         }
