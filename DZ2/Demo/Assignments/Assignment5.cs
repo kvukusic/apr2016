@@ -12,7 +12,7 @@ namespace APR.DZ2.Demo.Assignments
             int foundCounter = 0;
             for (int i = 0; i < 10000; i++)
             {
-                var opt = new NelderMeadSearch();
+                var opt = new NelderMeadMinimizer();
                 opt.IsOutputEnabled = false;
                 opt.IsOutputPerIterationEnabled = false;
                 var final = opt.Minimize(function, new double[] { random.Next(-50, 51) });

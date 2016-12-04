@@ -6,7 +6,7 @@ using APR.DZ1.Extensions;
 
 namespace APR.DZ2
 {
-    public class NelderMeadSearch : IMinimizer
+    public class NelderMeadMinimizer : IMinimizer
     {
         public static readonly int PRECISION = 6;
         public static readonly double EPSILON = Math.Pow(10, -PRECISION);
@@ -18,7 +18,7 @@ namespace APR.DZ2
         
         private double SIMPLEX_OFFSET = 1.0;
 
-        public NelderMeadSearch()
+        public NelderMeadMinimizer()
         {
             IsOutputPerIterationEnabled = true;
             IsOutputEnabled = true;

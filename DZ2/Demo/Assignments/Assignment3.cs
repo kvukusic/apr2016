@@ -10,12 +10,12 @@ namespace APR.DZ2.Demo.Assignments
             var function = new F4();
 
             // Nelder-Mead search
-            var opt1 = new NelderMeadSearch();
+            var opt1 = new NelderMeadMinimizer();
             opt1.IsOutputPerIterationEnabled = false;
             opt1.Minimize(function, new double[] { 5, 5 });
 
             // Hooke-Jeeves pattern search
-            var opt2 = new HookeJeevesSearch();
+            var opt2 = new HookeJeevesMinimizer();
             opt2.IsOutputPerIterationEnabled = false;
             opt2.Minimize(function, new double[] { 5, 5 });
         }

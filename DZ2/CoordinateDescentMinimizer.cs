@@ -6,23 +6,17 @@ using APR.DZ2.Functions;
 
 namespace APR.DZ2
 {
-    public class CoordinateDescent : IMinimizer
+    public class CoordinateDescentMinimizer : IMinimizer
     {
         public static readonly int PRECISION = 6;
         public static readonly double EPSILON = Math.Pow(10, -PRECISION);
         private static readonly int MAX_ITERATIONS = 10000;
 
-        // /// <summary>
-        // /// The upper bound of the interval used in finding the optimal <c>lambda</c>
-        // /// for the minimization function.
-        // /// </summary>
-        // private static readonly double INITIAL_GOLDEN_SECTION_INTERVAL = 0.01;
-
         public bool IsOutputEnabled { get; set; }
 
         public bool IsOutputPerIterationEnabled { get; set; }
 
-        public CoordinateDescent()
+        public CoordinateDescentMinimizer()
         {
             IsOutputPerIterationEnabled = true;
             IsOutputEnabled = true;
@@ -153,7 +147,7 @@ namespace APR.DZ2
             //     lower *= 2;
             // }
 
-            var minimizer = new GoldenSectionSearch();
+            var minimizer = new GoldenSectionMinimizer();
             minimizer.IsOutputEnabled = false;
             // return minimizer.Minimize(g, new GoldenSectionSearch.Interval(lower, upper));
             return minimizer.Minimize(g, 0);

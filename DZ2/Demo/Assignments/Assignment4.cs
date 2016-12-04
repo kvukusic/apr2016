@@ -14,7 +14,7 @@ namespace APR.DZ2.Demo.Assignments
             Console.WriteLine("Case 1: Generate simplex with offset from 1 to 20 and in point [0.5, 0.5].");
             for (int i = 1; i <= 20; i++)
             {
-                var opt = new NelderMeadSearch();
+                var opt = new NelderMeadMinimizer();
                 opt.IsOutputEnabled = false;
                 opt.IsOutputPerIterationEnabled = false;
                 double[] min = opt.Minimize(function, new double[] {0.5, 0.5}, i);
@@ -28,7 +28,7 @@ namespace APR.DZ2.Demo.Assignments
             Console.WriteLine("Case 2: Generate simplex with offset from 1 to 20 and in point [20, 20].");
             for (int i = 1; i <= 20; i++)
             {
-                var opt = new NelderMeadSearch();
+                var opt = new NelderMeadMinimizer();
                 opt.IsOutputEnabled = false;
                 opt.IsOutputPerIterationEnabled = false;
                 double[] min = opt.Minimize(function, new double[] { 20, 20 }, i);

@@ -5,7 +5,7 @@ using APR.DZ1.Extensions;
 
 namespace APR.DZ2
 {
-    public class HookeJeevesSearch : IMinimizer
+    public class HookeJeevesMinimizer : IMinimizer
     {
         public static readonly int PRECISION = 6;
         public static readonly double EPSILON = Math.Pow(10, -PRECISION);
@@ -13,9 +13,9 @@ namespace APR.DZ2
         private static readonly double DEFAULT_E = EPSILON;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="HookeJeevesSearch"/> class.
+        /// Initializes a new instance of the <see cref="HookeJeevesMinimizer"/> class.
         /// </summary>
-        public HookeJeevesSearch()
+        public HookeJeevesMinimizer()
         {
             IsOutputPerIterationEnabled = true;
             IsOutputEnabled = true;

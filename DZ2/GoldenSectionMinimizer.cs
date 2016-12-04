@@ -3,14 +3,14 @@ using APR.DZ2.Functions;
 
 namespace APR.DZ2
 {
-    public class GoldenSectionSearch
+    public class GoldenSectionMinimizer
     {
         public static readonly int PRECISION = 6;
         public static readonly double EPSILON = Math.Pow(10, -PRECISION);
         private static readonly double UNIMODAL_OFFSET = 1.0;
         private static readonly double GOLDEN_RATIO = (Math.Sqrt(5.0) - 1) / 2.0;
 
-        public GoldenSectionSearch()
+        public GoldenSectionMinimizer()
         {
             IsOutputEnabled = true;
             IsOutputPerIterationEnabled = true;

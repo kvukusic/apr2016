@@ -23,17 +23,17 @@ namespace APR.DZ2.Demo.Assignments
             for (int i = 0; i < functions.Count; i++)
             {
                 var item = functions[i];
-                var opt1 = new NelderMeadSearch();
+                var opt1 = new NelderMeadMinimizer();
                 opt1.IsOutputEnabled = false;
                 var min1 = opt1.Minimize(item.Item1, item.Item2.Copy());
                 var opt1Evals = item.Item1.Evaluations;
 
-                var opt2 = new HookeJeevesSearch();
+                var opt2 = new HookeJeevesMinimizer();
                 opt2.IsOutputEnabled = false;
                 var min2 = opt2.Minimize(item.Item1, item.Item2.Copy());
                 var opt2Evals = item.Item1.Evaluations;
 
-                var opt3 = new CoordinateDescent();
+                var opt3 = new CoordinateDescentMinimizer();
                 opt3.IsOutputEnabled = false;
                 var min3 = opt3.Minimize(item.Item1, item.Item2.Copy());
                 var opt3Evals = item.Item1.Evaluations;
