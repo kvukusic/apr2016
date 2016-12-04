@@ -9,7 +9,7 @@ namespace APR.DZ3.Demo.Assignments
         {
             var function = new F5(2, -3);
 
-            var method = new SteepestDescentMethod();
+            var method = new SteepestDescentMinimizer();
 
             method.OptimizeStepSize = false;
             method.Minimize(function, new double[] {0, 0});
