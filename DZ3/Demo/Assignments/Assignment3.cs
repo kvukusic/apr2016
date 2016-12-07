@@ -13,8 +13,8 @@ namespace APR.DZ3.Demo.Assignments
                 method.AddExplicitConstraint(i, -100, 100);
             }
 
-            method.AddImplicitConstraint(new Constraint(x => x[0] - x[1], d => d <= 0));
-            method.AddImplicitConstraint(new Constraint(x => x[0] - 2, d => d <= 0));
+            method.AddImplicitConstraint(new Constraint(x => x[1] - x[0], d => d >= 0));
+            method.AddImplicitConstraint(new Constraint(x => 2 - x[0], d => d >= 0));
 
             method.Minimize(new F1(), new double[] { -1.9, 2.0 });
             method.Minimize(new F2(), new double[] { 0.1, 0.3 });
