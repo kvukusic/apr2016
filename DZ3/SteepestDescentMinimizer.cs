@@ -118,7 +118,7 @@ namespace APR.DZ3
                 }
                 else
                 { // Diverging
-                    ConsoleEx.WriteLineRed("The algorithm has diverged from the minimum.");
+                    ConsoleEx.WriteLineRed("The algorithm has diverged.");
                     ConsoleEx.WriteLine("The best value is at " + bestValuePoint.Format(PRECISION) + " => " +
                                       bestValue.ToString("F" + PRECISION));
                     ConsoleEx.WriteLine("Number of algorithm iterations: " + iteration);                                      
