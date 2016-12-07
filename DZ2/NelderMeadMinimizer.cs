@@ -179,8 +179,9 @@ namespace APR.DZ2
                                     for (int j = 0; j < n; j++)
                                     {
                                         v[i][j] = sigma * (v[l][j] + v[i][j]);
-                                        f[i] = function.Value(v[i][j]);
                                     }
+
+                                    f[i] = function.Value(v[i]);
                                 }
                             }
 
