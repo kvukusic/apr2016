@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using APR.DZ1.Extensions;
 using APR.DZ2;
 using APR.DZ2.Functions;
@@ -10,7 +11,7 @@ namespace APR.DZ3
     {
         private const int PRECISION = 6;
 
-        private readonly int MAX_IT = 1000;
+        private readonly int MAX_ITERATIONS = 10000;
 
         private readonly double EPSILON = Math.Pow(10, -PRECISION);
         private readonly double ALPHA = 1.3;
@@ -75,11 +76,26 @@ namespace APR.DZ3
 
         public double[] Minimize(Function function, double[] start)
         {
+            if (function == null)
+            {
+                throw new ArgumentNullException(nameof(function));
+            }
+
+            if (start == null)
+            {
+                throw new ArgumentNullException(nameof(start));
+            }
+
+            if (start.Length == 0)
+            {
+                throw new ArgumentException("Dimension of given starting point is invalid");
+            }
+
+            // Clear function
             function.Clear();
 
             if (IsOutputEnabled)
             {
-
                 ConsoleEx.WriteLine();
                 ConsoleEx.WriteLineGreen("****************************************************************");
                 ConsoleEx.WriteLineGreen("Starting minimization with Box-Constrained optimization method...");
@@ -92,22 +108,14 @@ namespace APR.DZ3
                 ConsoleEx.WriteLine();
             }
 
-            int iter = 0;
             var xc = start.Copy();
 
-            if (!ImplicitValid(xc)) 
-            {
-                 return xc;
-            }
-
+            if (!ImplicitValid(xc)) { return xc; }
             foreach (var constraint in _explicitConstraints)
             {
                 int i = constraint.Key;
                 double[] t = constraint.Value;
-                if (xc[i] < t[0] || xc[i] > t[1]) 
-                { 
-                    return xc; 
-                }
+                if (xc[i] < t[0] || xc[i] > t[1]) { return xc; }
             }
 
             double[][] d = new double[2 * xc.Length][];
@@ -153,9 +161,25 @@ namespace APR.DZ3
                 }
             }
 
-            while (!IsEnd(function.Value(xc), d, function) && iter < MAX_IT)
+            if (IsOutputEnabled)
             {
-                iter++;
+                // Print out the initial simplex points
+                ConsoleEx.WriteLine("Initial simplex points:");
+                for (int i = 0; i < d.Length; i++)
+                {
+                    ConsoleEx.Write($"x{i}={d[i].Format(PRECISION)}, ");
+                    ConsoleEx.Write($"f(x{i})={function.Value(d[i]).ToString("F" + PRECISION)}");
+                    ConsoleEx.WriteLine();
+                }
+
+                ConsoleEx.WriteLine();
+            }
+
+            int iteration = 0;
+
+            while (!IsEnd(function.Value(xc), d, function) && iteration < MAX_ITERATIONS)
+            {
+                iteration++;
                 max = 0;
                 secondMax = -1;
                 for (int i = 1; i < d.Length; i++)
@@ -214,6 +238,8 @@ namespace APR.DZ3
                 if (evals[min] < evals[i]) { min = i; }
             }
 
+            double[] xmin = d[min];
+
             if (IsOutputPerIterationEnabled && IsOutputEnabled)
             {
                 ConsoleEx.WriteLine();
@@ -221,35 +247,18 @@ namespace APR.DZ3
 
             if (IsOutputEnabled)
             {
-                if (iter == MAX_IT)
-                {
-                    var evaluations = function.Evaluations;
-                    var cachedCalls = function.CachedCalls;
-                    ConsoleEx.WriteLineRed("Maximum number of iterations reached. Returning value: x = " +
-                                      d[min].Format(PRECISION));
-                    ConsoleEx.WriteLine("Function value of final position is: " +
-                                      function.Value(d[min]).ToString("F" + PRECISION));
-                    ConsoleEx.WriteLine("Number of algorithm iterations: " + iter);
-                    ConsoleEx.WriteLine("Number of function cached calls: " + cachedCalls);
-                    ConsoleEx.WriteLine("Number of function evaluations: " + evaluations);
-                    ConsoleEx.WriteLine();
-                }
-                else
-                {
-                    var evaluations = function.Evaluations;
-                    var cachedCalls = function.CachedCalls;
-                    ConsoleEx.WriteLineGreen("Final position found. Returning value: x = " +
-                                      d[min].Format(PRECISION));
-                    ConsoleEx.WriteLine("Function value of final position is: " +
-                                      function.Value(d[min]).ToString("F" + PRECISION));
-                    ConsoleEx.WriteLine("Number of algorithm iterations: " + iter);
-                    ConsoleEx.WriteLine("Number of function cached calls: " + cachedCalls);
-                    ConsoleEx.WriteLine("Number of function evaluations: " + evaluations);
-                    ConsoleEx.WriteLine();
-                }
+                var evaluations = function.Evaluations;
+                var cachedCalls = function.CachedCalls;
+                ConsoleEx.WriteLineGreen("Final position found. Returning value: x = " + xmin.Format(PRECISION));
+                if(iteration == MAX_ITERATIONS) ConsoleEx.WriteLineRed($"Maximum number of iterations were hit [{MAX_ITERATIONS}]");
+                ConsoleEx.WriteLineGreen("Function value of final position is: " + function.Value(xmin).ToString("F" + PRECISION));
+                ConsoleEx.WriteLine("Number of algorithm iterations: " + iteration);
+                ConsoleEx.WriteLine("Number of function cached calls: " + cachedCalls);
+                ConsoleEx.WriteLine("Number of function evaluations: " + evaluations);
+                ConsoleEx.WriteLine();
             }
 
-            return d[min];
+            return xmin;
         }
 
         private bool IsEnd(double xcV, double[][] points, Function f)
