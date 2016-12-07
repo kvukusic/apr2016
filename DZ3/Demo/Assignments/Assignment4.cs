@@ -8,7 +8,7 @@ namespace APR.DZ3.Demo.Assignments
     {
         public void Run()
         {
-            var method = new UnconstrainedMixedMethod();
+            var method = new UnconstrainedMixedMinimizer();
             method.Minimizer = new HookeJeevesMinimizer();
 
             method.AddImplicitConstraint(new Constraint(x => x[1] - x[0], d => d >= 0));

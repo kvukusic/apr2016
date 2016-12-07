@@ -8,7 +8,7 @@ namespace APR.DZ3.Demo.Assignments
     {
         public void Run()
         {
-            var method = new UnconstrainedMixedMethod();
+            var method = new UnconstrainedMixedMinimizer();
             method.Minimizer = new NelderMeadMinimizer();
 
             method.AddImplicitConstraint(new Constraint(x => 3 - x[0] - x[1], d => d >= 0));
