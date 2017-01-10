@@ -2,7 +2,7 @@ using System;
 
 namespace APR.DZ4
 {
-    public enum SelectionType
+    public enum GeneticAlgorithmVariant
     {
         Generational,
         SteadyState

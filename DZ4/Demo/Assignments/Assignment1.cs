@@ -8,12 +8,12 @@ namespace APR.DZ4.Demo.Assignments
     {
         public void Run()
         {
-            var funcDict = new Dictionary<string, GAFunction>()
+            var funcDict = new Dictionary<string, Tuple<Function, int>>()
             {
-                {"F1",  new GAFunction(new F1(), 2, new GAFunction.Constraint(-50, 150))},
-                {"F3",  new GAFunction(new F3(), 5, new GAFunction.Constraint(-50, 150))},
-                {"F6",  new GAFunction(new F6(), 2, new GAFunction.Constraint(-50, 150))},
-                {"F7",  new GAFunction(new F7(), 2, new GAFunction.Constraint(-50, 150))},
+                {"F1", new Tuple<Function, int>(new F1(), 2) },
+                {"F3", new Tuple<Function, int>(new F3(), 5) },
+                {"F6", new Tuple<Function, int>(new F6(), 2) },
+                {"F7", new Tuple<Function, int>(new F7(), 2) },
             };
 
             string fKey = null;
@@ -49,14 +49,37 @@ namespace APR.DZ4.Demo.Assignments
             if (fKey != null)
             {
                 Console.WriteLine("Optimization of function " + fKey + ":");
-                var ga = new GeneticAlgorithm(funcDict[fKey]);
-                ga.Encoding = ChromosomeEncoding.Binary;
-                ga.CrossoverOperator = CrossoverOperator.OnePoint;
-                ga.StopValue = 10e-6;
-                ga.Precision = 6;
-                ga.PopulationSize = 1000;
-                ga.MutationRate = 5;
-                ga.Initialize();
+
+                var function = funcDict[fKey].Item1;
+                var dimension = funcDict[fKey].Item2;
+
+                var problem = new FunctionMinimizationFloatingPointProblem(function, dimension, -50, 150);
+                var populationSize = 1000;
+                var chromosomeFactory = new RandomFloatingPointChromosomeFactory(problem);
+                var crossoverOperator = new HeuristicCrossoverOperator(0.75);
+                var mutationOperator = new UniformMutationOperator(0.1);
+                var selectionOperator = new TournamentSelectionOperator<FloatingPointChromosome>(3, problem);
+                var terminationCondition = new CompositeTerminationCondition(
+                    new MaxEvaluationsTerminationCondition(100000),
+                    new EvolutionTimeTerminationCondition(TimeSpan.FromMinutes(1)),
+                    new FitnessStagnationTerminationCondition(100),
+                    new FitnessValueTerminationCondition((fitness) => fitness < 10e-6)
+                );
+                var generationGap = 0.4;
+                var replacementOperator = new WorstFitnessReplacementOperator<FloatingPointChromosome>(problem);
+
+                var ga = new SteadyStateGeneticAlgorithm<FloatingPointChromosome>(
+                    problem,
+                    populationSize,
+                    chromosomeFactory,
+                    selectionOperator,
+                    crossoverOperator,
+                    mutationOperator,
+                    terminationCondition,
+                    generationGap,
+                    replacementOperator
+                );
+
                 ga.Run();
 
                 Console.WriteLine();
