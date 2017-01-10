@@ -58,7 +58,7 @@ namespace APR.DZ4.Demo.Assignments
                 {
                     if (i == 0)
                     {
-                        Console.WriteLine("Optimization of function with binary representation " + fKey + ":");
+                        Console.WriteLine("\nOptimization of function with binary representation " + fKey + ":");
 
                         new GeneticAlgorithmRunner<BinaryChromosome>(
                             new GeneticAlgorithmBuilder<BinaryChromosome>(
@@ -72,7 +72,7 @@ namespace APR.DZ4.Demo.Assignments
                     }
                     else
                     {
-                        Console.WriteLine("Optimization of function with floating-point representation " + fKey + ":");
+                        Console.WriteLine("\nOptimization of function with floating-point representation " + fKey + ":");
 
                         new GeneticAlgorithmRunner<FloatingPointChromosome>(
                             new GeneticAlgorithmBuilder<FloatingPointChromosome>(

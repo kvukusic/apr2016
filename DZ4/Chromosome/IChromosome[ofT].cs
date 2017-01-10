@@ -9,7 +9,7 @@ namespace APR.DZ4
         TValue GetValue(int index);
 
         void SetValue(int index, TValue value);
-        
+
         string GetValueString(int index);
     }
 }
