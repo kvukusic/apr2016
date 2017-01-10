@@ -53,34 +53,15 @@ namespace APR.DZ4.Demo.Assignments
                 var function = funcDict[fKey].Item1;
                 var dimension = funcDict[fKey].Item2;
 
-                var problem = new FunctionMinimizationFloatingPointProblem(function, dimension, -50, 150);
-                var populationSize = 1000;
-                var crossoverOperator = new HeuristicCrossoverOperator(0.75);
-                var mutationOperator = new UniformMutationOperator(0.1);
-                var selectionOperator = new TournamentSelectionOperator<FloatingPointChromosome>(3, problem);
-                var terminationCondition = new CompositeTerminationCondition(
-                    new MaxEvaluationsTerminationCondition(100000),
-                    new EvolutionTimeTerminationCondition(TimeSpan.FromMinutes(1)),
-                    new FitnessStagnationTerminationCondition(100),
-                    new FitnessValueTerminationCondition((fitness) => fitness < 10e-6)
-                );
-                var generationGap = 0.4;
-                var replacementOperator = new WorstFitnessReplacementOperator<FloatingPointChromosome>(problem);
-
-                var ga = new SteadyStateGeneticAlgorithm<FloatingPointChromosome>(
-                    problem,
-                    populationSize,
-                    selectionOperator,
-                    crossoverOperator,
-                    mutationOperator,
-                    terminationCondition,
-                    generationGap,
-                    replacementOperator
-                );
-
-                ga.Run();
-
-                Console.WriteLine(ga.BestIndividual);
+                new GeneticAlgorithmRunner<FloatingPointChromosome>(
+                    new GeneticAlgorithmBuilder<FloatingPointChromosome>(
+                        new FunctionMinimizationFloatingPointProblem(function, dimension, -50, 150),
+                        new HeuristicCrossoverOperator(0.75),
+                        new UniformMutationOperator(0.1)
+                )
+                .SetGeneticAlgorithmVariant(GeneticAlgorithmVariant.SteadyState)
+                .SetFitnessValueTreshold(10e-6)
+                .Build()).Run();
 
                 Console.WriteLine();
             }
