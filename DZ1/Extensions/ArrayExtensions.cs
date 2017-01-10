@@ -36,6 +36,26 @@ namespace APR.DZ1.Extensions
             return dest;
         }
 
+        public static string Format(this int[] src)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            sb.Append("[");
+
+            for (int i = 0; i < src.Length; i++)
+            {
+                sb.Append(src[i]);
+                if (i != src.Length - 1)
+                {
+                    sb.Append(", ");
+                }
+            }
+
+            sb.Append("]");
+
+            return sb.ToString();
+        }
+
         public static string Format(this double[] src, int precision = 3)
         {
             StringBuilder sb = new StringBuilder();
