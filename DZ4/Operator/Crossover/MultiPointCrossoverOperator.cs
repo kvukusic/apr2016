@@ -73,13 +73,13 @@ namespace APR.DZ4
                 int previousCrossPoint = 0;
                 for (int j = 0; j < crossPoints.Length; j++)
                 {
-                    for (int k = previousCrossPoint; k < crossPoints[i]; k++)
+                    for (int k = previousCrossPoint; k < crossPoints[j]; k++)
                     {
                         child1[i][k] = i%2==0 ? parent2Value[k] : parent1Value[k];
                         child2[i][k] = i%2==0 ? parent1Value[k] : parent2Value[k];
                     }
 
-                    previousCrossPoint = crossPoints[i];
+                    previousCrossPoint = crossPoints[j];
                 }
             }
 
