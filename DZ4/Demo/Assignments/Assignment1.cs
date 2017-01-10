@@ -57,7 +57,7 @@ namespace APR.DZ4.Demo.Assignments
                     new GeneticAlgorithmBuilder<FloatingPointChromosome>(
                         new FunctionMinimizationFloatingPointProblem(function, dimension, -50, 150),
                         new HeuristicCrossoverOperator(0.75),
-                        new UniformMutationOperator(0.1)
+                        new GaussianMutationOperator(0.1)
                 )
                 .SetGeneticAlgorithmVariant(GeneticAlgorithmVariant.SteadyState)
                 .SetFitnessValueTreshold(10e-6)

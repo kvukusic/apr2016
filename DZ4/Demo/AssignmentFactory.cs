@@ -19,6 +19,8 @@ namespace APR.DZ4.Demo
                     return new Assignments.Assignment4();
                 case 5:
                     return new Assignments.Assignment5();
+                case 6:
+                    return new Assignments.AdditionalAssignment();
                 default:
                     return null;
             }

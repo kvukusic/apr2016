@@ -9,7 +9,7 @@ namespace APR.DZ4.Demo
             while(true)
             {
                 Console.WriteLine("================================");
-                Console.WriteLine("Enter assignment number [1 - 5]:");
+                Console.WriteLine("Enter assignment number [1 - 5] or [6] for F6 parameter optimization:");
                 int identifier = -1;
                 Int32.TryParse(Console.ReadLine(), out identifier);
 
