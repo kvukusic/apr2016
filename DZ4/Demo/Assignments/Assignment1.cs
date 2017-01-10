@@ -55,7 +55,6 @@ namespace APR.DZ4.Demo.Assignments
 
                 var problem = new FunctionMinimizationFloatingPointProblem(function, dimension, -50, 150);
                 var populationSize = 1000;
-                var chromosomeFactory = new RandomFloatingPointChromosomeFactory(problem);
                 var crossoverOperator = new HeuristicCrossoverOperator(0.75);
                 var mutationOperator = new UniformMutationOperator(0.1);
                 var selectionOperator = new TournamentSelectionOperator<FloatingPointChromosome>(3, problem);
@@ -71,7 +70,6 @@ namespace APR.DZ4.Demo.Assignments
                 var ga = new SteadyStateGeneticAlgorithm<FloatingPointChromosome>(
                     problem,
                     populationSize,
-                    chromosomeFactory,
                     selectionOperator,
                     crossoverOperator,
                     mutationOperator,
@@ -81,6 +79,8 @@ namespace APR.DZ4.Demo.Assignments
                 );
 
                 ga.Run();
+
+                Console.WriteLine(ga.BestIndividual);
 
                 Console.WriteLine();
             }

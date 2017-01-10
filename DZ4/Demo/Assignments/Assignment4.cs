@@ -21,7 +21,6 @@ namespace APR.DZ4.Demo.Assignments
             // ga.Run();
 
             var problem = new FunctionMinimizationBinaryProblem(new F1(), 2, 4, -50, 150);
-            var chromosomeFactory = new RandomBinaryChromosomeFactory(problem);
             var populationSize = 10000;
             var selectionOperator = new TournamentSelectionOperator<BinaryChromosome>(5, problem);
             var crossoverOperator = new UniformCrossoverOperator(0.75);
@@ -36,7 +35,6 @@ namespace APR.DZ4.Demo.Assignments
             var ga = new SteadyStateGeneticAlgorithm<BinaryChromosome>(
                 problem,
                 populationSize,
-                chromosomeFactory,
                 selectionOperator,
                 crossoverOperator,
                 mutationOperator,
