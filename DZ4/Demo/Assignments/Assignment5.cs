@@ -8,76 +8,69 @@ namespace APR.DZ4.Demo.Assignments
     {
         public void Run()
         {
-            // string fKey = null;
+            string fKey = null;
 
-            // Console.WriteLine("Enter function number [6, 7]:");
-            // try
-            // {
-            //     switch (Int32.Parse(Console.ReadLine()))
-            //     {
-            //         case 6:
-            //             fKey = "F6";
-            //             break;
-            //         case 7:
-            //             fKey = "F7";
-            //             break;
-            //         default:
-            //             Console.WriteLine("Invalid input. Try again with numbar from 6, 7.");
-            //             break;
-            //     }
-            // }
-            // catch (Exception)
-            // {
-            //     Console.WriteLine("Invalid input. Try again.");
-            //     return;
-            // }
+            Console.WriteLine("Enter function number [6, 7]:");
+            try
+            {
+                switch (Int32.Parse(Console.ReadLine()))
+                {
+                    case 6:
+                        fKey = "F6";
+                        break;
+                    case 7:
+                        fKey = "F7";
+                        break;
+                    default:
+                        Console.WriteLine("Invalid input. Try again with numbar from 6, 7.");
+                        break;
+                }
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Invalid input. Try again.");
+                return;
+            }
 
-            // Console.WriteLine("Enter tournament size > 2:");
-            // GAFunction f = null;
-            // int tsize = 0;
-            // try
-            // {
-            //     var dim = Int32.Parse(Console.ReadLine());
-            //     if (dim <= 0)
-            //     {
-            //         Console.WriteLine("Invalid input. Try again.");
-            //         return;
-            //     }
+            Console.WriteLine("Enter tournament size > 2:");
+            int tsize = 0;
+            try
+            {
+                var dim = Int32.Parse(Console.ReadLine());
+                if (dim <= 0)
+                {
+                    Console.WriteLine("Invalid input. Try again.");
+                    return;
+                }
 
-            //     tsize = dim;
-            // }
-            // catch (Exception)
-            // {
-            //     Console.WriteLine("Invalid input. Try again.");
-            //     return;
-            // }
+                tsize = dim;
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Invalid input. Try again.");
+                return;
+            }
 
-            // if (fKey.Equals("F6"))
-            // {
-            //     f = new GAFunction(new F6(), 2, new GAFunction.Constraint(-150, 50));
-            // }
-            // else
-            // {
-            //     f = new GAFunction(new F7(), 2, new GAFunction.Constraint(-150, 50));
-            // }
+            Function f = fKey.Equals("F6") ? (Function)new F6() : new F7();
 
-            // if (fKey != null)
-            // {
-            //     Console.WriteLine("Optimization of function " + fKey + ":");
-            //     var ga = new GeneticAlgorithm(f);
-            //     ga.Encoding = ChromosomeEncoding.FloatingPoint;
-            //     ga.CrossoverOperator = CrossoverOperator.Arithmetic;
-            //     ga.StopValue = 10e-6;
-            //     ga.TournamentSize = tsize;
-            //     ga.StopEval = 100000;
-            //     ga.Precision = 6;
-            //     ga.PopulationSize = 200;
-            //     ga.MutationRate = 5;
-            //     ga.Initialize();
-            //     ga.Run();
+            if (fKey != null)
+            {
+                Console.WriteLine("Optimization of function " + fKey + ":");
 
-            //     Console.WriteLine();
-            // }
+                IProblem<FloatingPointChromosome> problem = new FunctionMinimizationFloatingPointProblem(f, 2, -50, 150);
+                new GeneticAlgorithmRunner<FloatingPointChromosome>(
+                    new GeneticAlgorithmBuilder<FloatingPointChromosome>(
+                        problem,
+                        new HeuristicCrossoverOperator(0.75),
+                        new UniformMutationOperator(0.1)
+                )
+                .SetGeneticAlgorithmVariant(GeneticAlgorithmVariant.SteadyState)
+                .SetSelectionOperator(new TournamentSelectionOperator<FloatingPointChromosome>(tsize, problem))
+                .SetFitnessValueTreshold(10e-6)
+                .Build()).Run();
+
+                Console.WriteLine();
+            }
         }
     }
 }
