@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Linq;
 using System.Text;
 
@@ -8,6 +9,11 @@ namespace APR.DZ1.Extensions
     {
         public static T[] Copy<T>(this T[] src)
         {
+            if (src is BitArray[])
+            {
+                return (src as BitArray[]).Copy() as T[];
+            }
+
             var dest = new T[src.Length];
             Array.Copy(src, dest, dest.Length);
             return dest;
@@ -17,6 +23,16 @@ namespace APR.DZ1.Extensions
         {
             var dest = new double[src.Length];
             Array.Copy(src, dest, dest.Length);
+            return dest;
+        }
+
+        public static BitArray[] Copy(this BitArray[] src)
+        {
+            var dest = new BitArray[src.Length];
+            for (int i = 0; i < dest.Length; i++)
+            {
+                dest[i] = new BitArray(src[i]);
+            }
             return dest;
         }
 
