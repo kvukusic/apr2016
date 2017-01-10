@@ -12,16 +12,20 @@ namespace APR.DZ4.Demo.Assignments
 
             // Population and tournament size box plot data made with following alogorithm
 
-            for (int i = 0; i < 5; i++)
+            var populationSizes = new int[]{30,50,100,200,500,1000,3000};
+
+            for (int j = 0; j < 10; j++)
             {
                 string result = "";
-                foreach (int tournamentSize in new int[] { 2, 3, 5, 10, 15 })
+                for (int i = 0; i < populationSizes.Length; i++)
                 {
+                    var populationSize = populationSizes[i];
                     var problem = new FunctionMinimizationFloatingPointProblem(new F6(), 2, -50, 150);
-                    var populationSize = 500;
+                    // var populationSize = 500;
+                    var tournamentSize = 3;
                     var selectionOperator = new TournamentSelectionOperator<FloatingPointChromosome>(tournamentSize, problem);
-                    var crossoverOperator = new HeuristicCrossoverOperator(0.75);
-                    var mutationOperator = new GaussianMutationOperator(0.1);
+                    var crossoverOperator = new HeuristicCrossoverOperator(0.8);
+                    var mutationOperator = new GaussianMutationOperator(0.05);
                     var elitismRate = 1.0 / populationSize;
 
                     var ga = new GeneticAlgorithmBuilder<FloatingPointChromosome>(
@@ -37,10 +41,10 @@ namespace APR.DZ4.Demo.Assignments
                     // new GeneticAlgorithmRunner<FloatingPointChromosome>(ga).Run();
                     ga.Run();
 
-                    result += ga.BestIndividual.Fitness + ",";
+                    result += ga.BestIndividual.Fitness;
+                    if (i != populationSizes.Length - 1)  result += ",";
                 }
 
-                Console.WriteLine();
                 Console.WriteLine(result);
             }
         }
