@@ -51,7 +51,7 @@ namespace APR.DZ4
 
             IBinaryProblem problem = (IBinaryProblem)parent1.Problem;
 
-            BinaryChromosome child = parent1;
+            BinaryChromosome child = (BinaryChromosome)parent1.Copy();
 
             for (int i = 0; i < problem.Dimension; i++)
             {

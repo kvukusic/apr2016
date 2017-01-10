@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using APR.DZ1.Extensions;
 using APR.DZ4.Extensions;
 
 namespace APR.DZ4
@@ -55,8 +56,8 @@ namespace APR.DZ4
 
             IBinaryProblem problem = (IBinaryProblem)parent1.Problem;
 
-            BinaryChromosome child1 = parent1;
-            BinaryChromosome child2 = parent2;
+            BinaryChromosome child1 = (BinaryChromosome)parent1.Copy();
+            BinaryChromosome child2 = (BinaryChromosome)parent2.Copy();
 
             for (int i = 0; i < problem.Dimension; i++)
             {
@@ -69,14 +70,15 @@ namespace APR.DZ4
                 // then use cross point for every bit
                 var crossPointsCount = Math.Min(numberOfBits-1, _numberOfCrossPoints);
                 var crossPoints = _random.NextInts(0, numberOfBits, crossPointsCount);
+
                 crossPoints = crossPoints.OrderBy(p => p).ToArray();
                 int previousCrossPoint = 0;
                 for (int j = 0; j < crossPoints.Length; j++)
                 {
                     for (int k = previousCrossPoint; k < crossPoints[j]; k++)
                     {
-                        child1[i][k] = i%2==0 ? parent2Value[k] : parent1Value[k];
-                        child2[i][k] = i%2==0 ? parent1Value[k] : parent2Value[k];
+                        child1[i][k] = j%2==0 ? parent2Value[k] : parent1Value[k];
+                        child2[i][k] = j%2==0 ? parent1Value[k] : parent2Value[k];
                     }
 
                     previousCrossPoint = crossPoints[j];
