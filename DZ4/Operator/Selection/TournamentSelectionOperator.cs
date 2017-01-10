@@ -20,13 +20,8 @@ namespace APR.DZ4
 
         public T Execute(IList<T> population)
         {
-            IList<T> candidates = new List<T>(_tournamentSize);
-
-            for (int i = 0; i < _tournamentSize; i++)
-            {
-                candidates.Add(population[_random.NextInt(0, population.Count)]);
-            }
-
+            int[] candidateIndices = _random.NextInts(0, population.Count, _tournamentSize);
+            IList<T> candidates = candidateIndices.Select(i => population[i]).ToList();
             return candidates.OrderByDescending(c => c, _problem.FitnessComparer).First();
         }
     }

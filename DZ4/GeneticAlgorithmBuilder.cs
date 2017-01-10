@@ -28,7 +28,7 @@ namespace APR.DZ4
             _selectionOperator = new TournamentSelectionOperator<T>(3, problem);
             _replacementOperator = new WorstFitnessReplacementOperator<T>(problem);
             _populationSize = 1000;
-            _maxGenerations = 10000;
+            _maxGenerations = 1000;
             _maxEvaluations = 100000;
             _fitnessValue = 10e-6;
             _elitismRate = 1.0/_populationSize;

@@ -13,7 +13,7 @@ namespace APR.DZ4
 
         public void Run()
         {
-            ConsoleEx.WriteLineGreen("Genetic algorithm started...\n");
+            ConsoleEx.WriteLineGreen("\nGenetic algorithm started...\n");
 
             try
             {
