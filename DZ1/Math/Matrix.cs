@@ -377,13 +377,26 @@ namespace APR.DZ1
             return result;
         }
 
+        public static Matrix Zero(int rows, int columns)
+        {
+            Matrix result = new Matrix(rows, columns);
+            for (int r = 0; r < rows; r++)
+            {
+                for (int c = 0; c < columns; c++)
+                {
+                    result[r][c] = 0.0;
+                }
+            }
+            return result;
+        }
+
         #endregion
 
         #region Write
             
-        public void Write(TextWriter writer)
+        public void Write(TextWriter writer, int precision)
         {
-            using(StringReader sr = new StringReader(this.ToString()))
+            using(StringReader sr = new StringReader(this.ToString(precision)))
             {
                 string line;
                 while((line = sr.ReadLine()) != null)
@@ -393,9 +406,19 @@ namespace APR.DZ1
             }
         }
 
+        public void Write(TextWriter writer)
+        {
+            Write(writer, PRECISION);
+        }
+
         public void WriteToConsole()
         {
-            Write(Console.Out);
+            WriteToConsole(PRECISION);
+        }
+
+        public void WriteToConsole(int precision)
+        {
+            Write(Console.Out, precision);
         }
 
         public void WriteToFile(string filePath)
@@ -581,14 +604,14 @@ namespace APR.DZ1
 
         #region ToString
 
-        public override string ToString()
+        public string ToString(int precision)
         {
             StringBuilder sb = new StringBuilder();
             for (int r = 0; r < _rows; r++)
             {
                 for (int c = 0; c < _cols; c++)
                 {
-                    sb.Append(String.Format("{0:F" + PRECISION + "}", _elements[r][c]));
+                    sb.Append(String.Format("{0:F" + precision + "}", _elements[r][c]));
                     if (c < _cols - 1)
                     {
                         sb.Append("\t");
@@ -601,6 +624,11 @@ namespace APR.DZ1
                 }
             }
             return sb.ToString();
+        }
+
+        public override string ToString()
+        {
+            return ToString(PRECISION);
         }
 
         #endregion
