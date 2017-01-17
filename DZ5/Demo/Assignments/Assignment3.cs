@@ -31,6 +31,7 @@ namespace APR.DZ5.Demo.Assignments
                         break;
                     default:
                         Console.WriteLine("Invalid input. Try again with numbers 1, 2 or 3.");
+                        goto choose_method;
                         break;
                 }
             }
@@ -42,11 +43,11 @@ namespace APR.DZ5.Demo.Assignments
 
             specify_tmax:
 
-            int? tmax = null;
+            double? tmax = null;
             Console.WriteLine("Enter t_max:");
             try
             {
-                tmax = Int32.Parse(Console.ReadLine());
+                tmax = Double.Parse(Console.ReadLine());
                 if (tmax < 0)
                 {
                     Console.WriteLine("Invalid input. Try again.");
