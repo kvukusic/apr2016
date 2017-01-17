@@ -25,7 +25,15 @@ namespace System
         public static void WriteLineGreen(String message = null)
         {
             var oldColor = Console.ForegroundColor;
-            Console.ForegroundColor = ConsoleColor.Green;
+            Console.ForegroundColor = ConsoleColor.DarkGreen;
+            Console.WriteLine(message);
+            Console.ForegroundColor = oldColor;
+        }
+
+        public static void WriteLineYellow(String message = null)
+        {
+            var oldColor = Console.ForegroundColor;
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
             Console.WriteLine(message);
             Console.ForegroundColor = oldColor;
         }
