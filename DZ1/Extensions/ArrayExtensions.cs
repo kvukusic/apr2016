@@ -56,24 +56,34 @@ namespace APR.DZ1.Extensions
             return sb.ToString();
         }
 
-        public static string Format(this double[] src, int precision = 3)
+        public static string Format(this double[] src, int precision = 3, bool addBracket = true, bool addSpaces = true)
         {
             StringBuilder sb = new StringBuilder();
 
-            sb.Append("[");
+            if (addBracket)
+                sb.Append("[");
 
             for (int i = 0; i < src.Length; i++)
             {
                 sb.Append(src[i].ToString("F" + precision));
                 if (i != src.Length - 1)
                 {
-                    sb.Append(", ");
+                    if (addSpaces)
+                        sb.Append(", ");
+                    else
+                        sb.Append(",");
                 }
             }
 
-            sb.Append("]");
+            if (addBracket)
+                sb.Append("]");
 
             return sb.ToString();
+        }
+
+        public static string Format(this double[] src, int precision = 3)
+        {
+            return src.Format(3, true);
         }
 
         public static double[] Fill(this double[] src, double value)
