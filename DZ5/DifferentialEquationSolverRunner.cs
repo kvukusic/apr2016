@@ -71,8 +71,8 @@ namespace APR.DZ5
                     if (printIteration) results[i].WriteToConsole(Precision);
                     stateVariables[i] = results[i].GetColumnVector(0);
                 }
-                StateVariablesThroughTime.Add(stateVariables);
-                Time.Add(t);
+                if (printIteration) StateVariablesThroughTime.Add(stateVariables);
+                if (printIteration) Time.Add(t);
             }
 
             // Transform data for graph drawing
