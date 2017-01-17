@@ -3,13 +3,13 @@ using APR.DZ1;
 
 namespace APR.DZ5.Demo.Assignments
 {
-    public class Assignment2 : IAssignment
+    public class Assignment3 : IAssignment
     {
         public void Run()
         {
-            Matrix a = new Matrix("Input/M2_A.txt");
-            Matrix b = new Matrix("Input/M2_B.txt");
-            Matrix x = new Matrix("Input/M2_X.txt");
+            Matrix a = new Matrix("Input/M3_A.txt");
+            Matrix b = new Matrix("Input/M3_B.txt");
+            Matrix x = new Matrix("Input/M3_X.txt");
 
             DifferentialEquationSolverRunner runner = null;
 

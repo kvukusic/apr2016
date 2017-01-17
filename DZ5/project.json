@@ -5,7 +5,9 @@
     "emitEntryPoint": true
   },
   "dependencies": {
-    "DZ1":"1.0.0-*"
+    "DZ1":"1.0.0-*",
+    "DZ2":"1.0.0-*",
+    "Newtonsoft.Json": "9.0.1"
   },
   "frameworks": {
     "netcoreapp1.0": {
